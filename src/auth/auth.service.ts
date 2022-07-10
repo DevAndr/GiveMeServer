@@ -65,7 +65,7 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new ForbiddenException('Access Denied');
+    if (!user || !user.hasheRt) throw new ForbiddenException('Access Denied');
 
     const rtMatches = await bcrypt.compareSync(rt, user.hash);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
