@@ -1,5 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Add this to the top of the file
+
+
 
 generator client {
   provider = "prisma-client-js"
@@ -10,8 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-    id Int @id @default(autoincrement())
-    createAt DateTime @default(now())
-    updateAt DateTime @updateAT
+enum Role {
+  USER
+  ADMIN
 }
+
+model User {
+    id       Int @id @default(autoincrement())
+    email    String   @unique
+    role      Role     @default(USER)
+    createAt DateTime @default(now())
+    updateAt DateTime @updatedAt
+    hash String
+    hasheRt String?
+
+    @@map("users")
+}
+
+
