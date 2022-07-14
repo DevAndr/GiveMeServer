@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-// Add this to the top of the file
-
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,23 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int        @default(autoincrement())
+  email     String     @unique
+  uid       String     @unique @default(uuid())
+  name      String?
+  role      Role       @default(USER)
+  createAt  DateTime   @default(now())
+  updateAt  DateTime   @updatedAt
+  hash      String
+  hasheRt   String?
+  wishLists WishList[]
+
+  @@id([uid, id])
+  @@unique([uid, id])
+  @@map("users")
+}
+
+model WishList {
+  uid         String    @id @unique @default(uuid())
+  name        String
+  description String?
+  uidUser     String
+  user        User      @relation(fields: [uidUser], references: [uid], onDelete: NoAction, onUpdate: NoAction)
+  products    Product[]
+
+  @@map("wish-list")
+}
+
+model Product {
+  name        String
+  description String?
+  price       Int
+  royalties   Int
+  delivery    Int
+  marketPlace TypeMarketPlace
+  link        String
+  img         String
+  status      StatusOrder
+  uidWishList String
+  uid         String          @id @unique @default(uuid())
+  wishList    WishList        @relation(fields: [uidWishList], references: [uid], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("products")
+}
+
+model Order {
+  uid         String      @id @unique @default(uuid())
+  name        String
+  description String?
+  price       Int
+  status      StatusOrder
+
+  @@map("orders")
+}
+
+model Sender {
+  uid       String  @id @unique @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  nickname  String?
+  wishes    String?
+
+  @@map("senders")
+}
+
+model Alert {
+  uid         String  @id @unique @default(uuid())
+  title       String
+  description String?
+
+  @@map("alerts")
+}
+
+model Rates {
+  id                Int     @id @default(autoincrement())
+  feePecentDelevery Decimal
+  feePecentPrice    Decimal
+
+  @@map("rates")
+}
+
 enum Role {
   USER
   ADMIN
 }
 
-model User {
-    id       Int @id @default(autoincrement())
-    email    String   @unique
-    uid String @unique @default(uuid())
-    name    String?
-    role      Role     @default(USER)
-    createAt DateTime @default(now())
-    updateAt DateTime @updatedAt
-    hash String
-    hasheRt String?
-
-    @@map("users")
+enum TypeMarketPlace {
+  OZON
+  WB
 }
 
-
+enum StatusOrder {
+  DELIVERY
+  DELIVERED
+  CANCELLED
+  PROCESSING
+  COMPLETED
+  PENDING
+  PAYED
+}
