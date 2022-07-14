@@ -3,7 +3,7 @@
 </p>
 
 [![wakatime](https://wakatime.com/badge/user/5ddacf2a-d840-478d-8cfe-492bd450e99b/project/78561b53-33cc-4798-9c34-4b8673eb1dde.svg)](https://wakatime.com/badge/user/5ddacf2a-d840-478d-8cfe-492bd450e99b/project/78561b53-33cc-4798-9c34-4b8673eb1dde)
-[![wakatime](https://wakatime.com/badge/github/DevAndr/GiveMeServer.svg)](https://wakatime.com/badge/github/DevAndr/GiveMeServer)
+ 
 
 ## Description
 
