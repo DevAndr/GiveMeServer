@@ -1,19 +1,49 @@
-import { Body, Controller, Get, Header, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Body, Controller, Get, Header, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { UserService } from './user.service';
+import { RemoveListDto } from './dto/remove-list.dto';
+import { GetCurrentUser, GetCurrentUserId, Public } from '../common/decorators';
+import { RtGuard } from '../common/decorators/guards';
+import { UpdateDataUserDto } from './dto/update-data-user.dto';
+import { PublicDataUserDto } from './dto/public-data-user.dto';
 
 @Controller('user')
 export class UserController {
+  constructor(private readonly userService: UserService) {
+  }
 
-  @Get()
+  @Post('find')
+  @Public()
+  @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  getUser(): string {
-    return 'user';
+  getUser(@Body('uidUser') uidUser: string): Promise<PublicDataUserDto> {
+    return this.userService.findUser({ uid: uidUser });
   }
 
   @Post()
+  @Public()
+  @UseGuards(RtGuard)
+  @HttpCode(HttpStatus.OK)
+  getCurrentUser(@GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
+    console.log(uid);
+    return this.userService.findUser({ uid: uid });
+  }
+
+  @Post("update")
+  @Public()
+  @UseGuards(RtGuard)
+  @HttpCode(HttpStatus.OK)
+  updateUserData(@Body() updateDataUserDto: UpdateDataUserDto, @GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
+    return  this.userService.updateUser({
+      where: { uid },
+      data: { ...updateDataUserDto }
+    });
+  }
+
+  @Post('remove-list-by-id')
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Header('Cache-Control', 'none')
-  createUser(@Body() user: CreateUserDto) {
-    return {user}
+  removeListById(@Body() removeListDto: RemoveListDto) {
+    return this.userService.removeListById(removeListDto);
   }
 }

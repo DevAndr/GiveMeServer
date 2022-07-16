@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, User } from '@prisma/client';
+import { RemoveListDto } from './dto/remove-list.dto';
+import { UpdateDataUserDto } from './dto/update-data-user.dto';
+import { PublicDataUserDto } from './dto/public-data-user.dto';
+
 
 @Injectable()
 export class UserService {
@@ -8,9 +12,20 @@ export class UserService {
   }
 
   async getUser(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
-    return this.prismaService.user.findUnique({
+    return await this.prismaService.user.findUnique({
       where,
     });
+  }
+
+  async findUser(where: Prisma.UserWhereUniqueInput): Promise<PublicDataUserDto | null> {
+    const user = await this.prismaService.user.findUnique({
+      where,
+      select: {
+        uid: true, name: true, email: true, createAt: true, updateAt: true
+      }
+    });
+
+    return user
   }
 
   async getUsers(params: {
@@ -26,22 +41,38 @@ export class UserService {
       take,
       cursor,
       where,
-      orderBy
+      orderBy,
     });
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prismaService.user.create({
-      data,
-    });
-  }
-
-  async updateUser(params: { where: Prisma.UserWhereUniqueInput, data: Prisma.UserUpdateInput }): Promise<User> {
+  async updateUser(params: { where: Prisma.UserWhereUniqueInput, data: Prisma.UserUpdateInput }): Promise<PublicDataUserDto> {
     const { where, data } = params;
-    return this.prismaService.user.update({
+    const user = await this.prismaService.user.update({
       data,
       where,
+      select: {
+        uid: true, name: true, email: true, createAt: true, updateAt: true
+      }
     });
+
+    return user
   }
 
+  async removeListById(removeListDto: RemoveListDto): Promise<User> {
+    const { uidList, uid } = removeListDto;
+    return await this.prismaService.user.update({
+      where: {
+        uid,
+      },
+      data: {
+        wishLists: {
+          deleteMany: [{ uid: uidList }],
+        },
+      },
+      include: {
+
+        wishLists: { include: { products: true } },
+      },
+    });
+  }
 }
