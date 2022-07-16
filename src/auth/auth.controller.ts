@@ -30,7 +30,7 @@ export class AuthController {
 
   @Post('logOut')
   @HttpCode(HttpStatus.OK)
-  async logOutLocal(@GetCurrentUserId() uid: string) {
+  async logOutLocal(@GetCurrentUserId() uid: string): Promise<boolean> {
     return this.authService.logOutLocal(uid);
   }
 
@@ -38,7 +38,7 @@ export class AuthController {
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser('refreshToken') refreshToken: string) {
+  async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser('refreshToken') refreshToken: string): Promise<Tokens> {
     return this.authService.refreshToken(uid, refreshToken);
   }
 }
