@@ -22,10 +22,13 @@ export class WishListService {
       where: {
         uid,
       },
+      include: {
+        products: true
+      }
     });
   }
 
-  async addList(createWishListDto: CreateWishListDto) {
+  async addList(createWishListDto: CreateWishListDto): Promise<any> {
     await this.prismaService.wishList.create({
       data: {
         ...createWishListDto,

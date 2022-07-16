@@ -15,6 +15,7 @@ export class WishListController {
   }
 
   @Get(':uid')
+  @Public()
   get(@Param('uid') uid: string) {
     return this.wshListService.getListById(uid)
   }
@@ -33,7 +34,6 @@ export class WishListController {
   @Post('create')
   @Public()
   create(@Body() createWishListDto: CreateWishListDto){
-    console.log(createWishListDto);
     return this.wshListService.addList(createWishListDto)
   }
 
