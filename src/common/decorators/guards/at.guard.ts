@@ -11,7 +11,8 @@ export class AtGuard extends AuthGuard('jwt') {
 
   canActivate(ctx: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.getAllAndOverride('isPublic', [
-      ctx.getHandler(), ctx.getClass(),
+      ctx.getHandler(),
+      ctx.getClass()
     ]);
 
 

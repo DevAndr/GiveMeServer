@@ -29,9 +29,10 @@ model WishList {
   name        String
   description String?
   uidUser     String
-  user        User      @relation(fields: [uidUser], references: [uid], onDelete: NoAction, onUpdate: NoAction)
+  user        User      @relation(fields: [uidUser], references: [uid], onDelete: Cascade, onUpdate: Cascade)
   products    Product[]
 
+  @@unique([uidUser, uid], map: "index_uidUser_uid")
   @@map("wish-list")
 }
 
@@ -45,9 +46,11 @@ model Product {
   link        String
   img         String
   status      StatusOrder
-  uidWishList String
+  uidWishList String?
   uid         String          @id @unique @default(uuid())
-  wishList    WishList        @relation(fields: [uidWishList], references: [uid], onDelete: NoAction, onUpdate: NoAction)
+  labels      String[]
+  uidReceiver String
+  wishList    WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("products")
 }
