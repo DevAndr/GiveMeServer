@@ -8,9 +8,10 @@ import { BannersModule } from './banners/banners.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/decorators/guards';
+import { ProductModule } from './product/product.module';
 
 @Module({
-  imports: [UserModule, AuthModule, WishListModule, HistoryModule, NotificationModule, BannersModule, PrismaModule],
+  imports: [UserModule, AuthModule, WishListModule, HistoryModule, NotificationModule, BannersModule, PrismaModule, ProductModule],
   providers: [
     {
       provide: APP_GUARD, useClass: AtGuard

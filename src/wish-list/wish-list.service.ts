@@ -6,8 +6,7 @@ import { DeleteWishListDto } from './dto/delete-wish-list.dto';
 
 @Injectable()
 export class WishListService {
-  constructor(private readonly prismaService: PrismaService) {
-  }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async getAll(uidUser: string): Promise<any> {
     return await this.prismaService.wishList.findMany({
