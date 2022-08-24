@@ -13,6 +13,10 @@ export class WishListService {
       where: {
         uidUser
       },
+      include: {
+        user: true,
+        products: true
+      }
     });
   }
 

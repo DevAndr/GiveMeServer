@@ -9,14 +9,45 @@ import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/decorators/guards';
 import { ProductModule } from './product/product.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { GraphQLDateTime } from 'graphql-iso-date';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { Role } from './user/entities/user.entity';
+import { GqlAuthGuard } from './common/decorators/guards/gql-auth.guard';
+
+export interface GqlContext {
+  req: Request;
+  res: Response;
+  // required for subscription
+}
 
 @Module({
-  imports: [UserModule, AuthModule, WishListModule, HistoryModule, NotificationModule, BannersModule, PrismaModule, ProductModule],
+  imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      playground: false,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      typePaths: ['./**/*.graphql'],
+      resolvers: { DateTime: GraphQLDateTime, Role: Role },
+      // context: ({req, res}: GqlContext) => ({req, res}),
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
+    }),
+    UserModule, AuthModule, WishListModule, HistoryModule,
+    NotificationModule, BannersModule, PrismaModule, ProductModule,
+  ],
   providers: [
     {
-      provide: APP_GUARD, useClass: AtGuard
-    }
-  ]
+      provide: APP_GUARD, useClass: AtGuard,
+    },
+    // {
+    //   provide: APP_GUARD, useClass: GqlAuthGuard,
+    // }
+  ],
 })
 
-export class AppModule {}
+export class AppModule {
+}

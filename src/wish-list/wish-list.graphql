@@ -1,0 +1,14 @@
+
+type WishList {
+    uid: String
+    name: String
+    description: String
+    uidUser: String!
+    user: User!
+    products: [Product]
+}
+
+
+type Query{
+    wishListForUser(uidUser: String): [WishList]
+}

@@ -17,27 +17,23 @@ export class WishListController {
 
   @Get(':uid')
   @Public()
-  @UseGuards(RtGuard)
   get(@Param('uid') uid: string) {
     return this.wshListService.getListById(uid)
   }
 
   @Post('remove')
   @Public()
-  @UseGuards(RtGuard)
   remove(@Body() deleteWishListDto: DeleteWishListDto) {
     return this.wshListService.removeById(deleteWishListDto)
   }
 
   @Post('remove-all')
-  @UseGuards(RtGuard)
   removeAll(@Body('uidUser') uidUser: string) {
     return this.wshListService.removeAll(uidUser)
   }
 
   @Post('create')
   @Public()
-  @UseGuards(RtGuard)
   create(@Body() createWishListDto: CreateWishListDto){
     return this.wshListService.addList(createWishListDto)
   }

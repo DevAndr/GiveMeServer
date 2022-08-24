@@ -2,7 +2,7 @@ import { Body, Controller, Get, Header, HttpCode, HttpStatus, Post, UseGuards } 
 import { UserService } from './user.service';
 import { RemoveListDto } from './dto/remove-list.dto';
 import { GetCurrentUser, GetCurrentUserId, Public } from '../common/decorators';
-import { RtGuard } from '../common/decorators/guards';
+import { AtGuard, RtGuard } from '../common/decorators/guards';
 import { UpdateDataUserDto } from './dto/update-data-user.dto';
 import { PublicDataUserDto } from './dto/public-data-user.dto';
 
@@ -13,7 +13,6 @@ export class UserController {
 
   @Post('find')
   @Public()
-  @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
   getUser(@Body('uidUser') uidUser: string): Promise<PublicDataUserDto> {
     return this.userService.findUser({ uid: uidUser });
@@ -21,7 +20,6 @@ export class UserController {
 
   @Post()
   @Public()
-  @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
   getCurrentUser(@GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
     console.log(uid);
@@ -29,8 +27,6 @@ export class UserController {
   }
 
   @Post("update")
-  @Public()
-  @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
   updateUserData(@Body() updateDataUserDto: UpdateDataUserDto, @GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
     return  this.userService.updateUser({
@@ -40,7 +36,6 @@ export class UserController {
   }
 
   @Post('remove-list-by-id')
-  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Header('Cache-Control', 'none')
   removeListById(@Body() removeListDto: RemoveListDto) {

@@ -1,0 +1,17 @@
+
+type Product {
+    name: String
+    description: String
+    price: Float
+    royalties: Float
+    delivery: Float
+    marketPlace: String
+    link: String
+    img: String
+    status: String
+    uidWishList: String
+    uid: String
+    labels: [String]
+    uidReceiver: String
+    wishList: WishList
+}
