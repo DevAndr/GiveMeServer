@@ -15,5 +15,6 @@ export const GetCurrentUserId = createParamDecorator((_: undefined, ctx: Executi
 
 
   const ctxGql = GqlExecutionContext.create(ctx)
-  return ctxGql.getContext().req.user.sub
+  const user = ctxGql.getContext().req.user  as JwtPayload;
+  return user.sub;
 });

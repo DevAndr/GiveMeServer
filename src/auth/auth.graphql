@@ -1,0 +1,14 @@
+type Tokens {
+    access_token: String
+    refresh_token: String
+}
+
+input InputLogIn {
+    email: String
+    password: String
+}
+
+type Mutation {
+    logIn(data: InputLogIn): Tokens!
+    test(email: String): String!
+}

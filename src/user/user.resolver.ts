@@ -1,20 +1,24 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { GraphqlAccess, Public } from '../common/decorators';
 import { GqlAuthGuard } from '../common/decorators/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { AtGuard, RtGuard } from '../common/decorators/guards';
+import { WishList, User } from '../graphql';
+import { WishListService } from '../wish-list/wish-list.service';
 
 
-// @UseGuards(GqlAuthGuard)
 // @Public()
-@GraphqlAccess()
-
-@Resolver('user-gql')
+//
+// @GraphqlAccess()
+// @UseGuards(GqlAuthGuard)
+@Resolver(of => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly wishListService: WishListService) {}
 
-  @Query('users')
+  // @UseGuards(GqlAuthGuard)
+  // @GraphqlAccess()
+  @Query(returns => [User], {name: 'users'})
   findAll() {
     return this.userService.getUsers({});
   }
@@ -23,6 +27,12 @@ export class UserResolver {
   findOne(@Args('uid') uid: string, @Context() ctx) {
     console.log(ctx);
     return this.userService.findUser({ uid: uid });
+  }
+
+  @ResolveField(() => [WishList])
+  async wishLists(@Parent() user: User) {
+    const { uid } = user;
+    return this.wishListService.getAll(uid);
   }
 
   @Mutation('findUser')

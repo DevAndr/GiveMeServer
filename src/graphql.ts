@@ -8,6 +8,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class InputLogIn {
+    email?: Nullable<string>;
+    password?: Nullable<string>;
+}
+
 export class CreateUserInput {
     uid?: Nullable<string>;
 }
@@ -18,6 +23,14 @@ export class FindUserInput {
 
 export class GetUser {
     uid?: Nullable<string>;
+}
+
+export abstract class IMutation {
+    abstract login(data?: Nullable<InputLogIn>): User | Promise<User>;
+
+    abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
+
+    abstract findUser(findUserInput: FindUserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export class Product {
@@ -44,6 +57,7 @@ export class User {
     role?: Nullable<Role>;
     createAt?: Nullable<DateTime>;
     updateAt?: Nullable<DateTime>;
+    wishLists?: Nullable<Nullable<WishList>[]>;
 }
 
 export abstract class IQuery {
@@ -52,12 +66,6 @@ export abstract class IQuery {
     abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
 
     abstract wishListForUser(uidUser?: Nullable<string>): Nullable<Nullable<WishList>[]> | Promise<Nullable<Nullable<WishList>[]>>;
-}
-
-export abstract class IMutation {
-    abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
-
-    abstract findUser(findUserInput: FindUserInput): Nullable<User> | Promise<Nullable<User>>;
 }
 
 export class WishList {

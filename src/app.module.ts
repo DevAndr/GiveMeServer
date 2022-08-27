@@ -15,37 +15,40 @@ import { GraphQLDateTime } from 'graphql-iso-date';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Role } from './user/entities/user.entity';
 import { GqlAuthGuard } from './common/decorators/guards/gql-auth.guard';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export interface GqlContext {
   req: Request;
   res: Response;
-  // required for subscription
 }
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      imports: [ConfigModule],
+      inject: [ConfigService],
       driver: ApolloDriver,
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      typePaths: ['./**/*.graphql'],
-      resolvers: { DateTime: GraphQLDateTime, Role: Role },
-      // context: ({req, res}: GqlContext) => ({req, res}),
-      subscriptions: {
-        'graphql-ws': true,
-        'subscriptions-transport-ws': true,
-      },
+      useFactory: async (configService: ConfigService) => ({
+        playground: false,
+        debug: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        typePaths: ['./src/**/*.graphql'],
+        resolvers: { DateTime: GraphQLDateTime, Role: Role },
+        context: ({req}) => ({headers: req.headers}),
+        // context: ({req, res}: GqlContext) => ({req, res}),
+        subscriptions: {
+          'graphql-ws': true,
+          'subscriptions-transport-ws': true,
+        },
+      })
     }),
     UserModule, AuthModule, WishListModule, HistoryModule,
     NotificationModule, BannersModule, PrismaModule, ProductModule,
   ],
   providers: [
     {
-      provide: APP_GUARD, useClass: AtGuard,
-    },
-    // {
-    //   provide: APP_GUARD, useClass: GqlAuthGuard,
-    // }
+      provide: APP_GUARD, useClass: GqlAuthGuard,
+    }
   ],
 })
 

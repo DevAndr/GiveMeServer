@@ -7,7 +7,6 @@ import { RtGuard } from '../common/decorators/guards';
 import { GetCurrentUser, GetCurrentUserId, Public } from '../common/decorators';
 
 @Controller('auth')
-
 export class AuthController {
   constructor(private readonly userService: UserService,
               private readonly authService: AuthService) {
@@ -24,6 +23,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   async signInLocal(@Body() authDto: AuthDto): Promise<Tokens> {
+    console.log('signInLocal', authDto);
     return this.authService.signInLocal(authDto);
   }
 
@@ -39,6 +39,7 @@ export class AuthController {
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
   async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser('refreshToken') refreshToken: string): Promise<Tokens> {
+    console.log(uid);
     return this.authService.refreshToken(uid, refreshToken);
   }
 }

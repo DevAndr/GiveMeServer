@@ -3,14 +3,15 @@ import { CreateWishListDto } from './dto/create-wish-list.dto';
 import { WishListService } from './wish-list.service';
 import { Public } from '../common/decorators';
 import { DeleteWishListDto } from './dto/delete-wish-list.dto';
-import { RtGuard } from '../common/decorators/guards';
+import { GqlAuthGuard, RtGuard } from '../common/decorators/guards';
 
 @Controller('wish-list')
 export class WishListController {
   constructor(private readonly wshListService: WishListService) {}
 
   @Post('all')
-  @Public()
+  // @Public()
+  @UseGuards(GqlAuthGuard)
   getAll(@Body('uidUser') uidUser: string) {
     return this.wshListService.getAll(uidUser)
   }

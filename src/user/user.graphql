@@ -9,7 +9,7 @@ type User {
   role: Role
   createAt: DateTime
   updateAt: DateTime
-#  wishLists:
+  wishLists: [WishList]
 }
 
 input CreateUserInput {
