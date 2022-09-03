@@ -7,7 +7,9 @@ import * as cookieParser from 'cookie-parser';
 async function run() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  app.enableCors();
+  app.enableCors(
+    { origin: true, credentials: true }
+  );
 
   app.connectMicroservice({
     transport: Transport.REDIS,

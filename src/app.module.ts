@@ -20,6 +20,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 export interface GqlContext {
   req: Request;
   res: Response;
+  headers: Headers;
 }
 
 @Module({
@@ -31,11 +32,17 @@ export interface GqlContext {
       useFactory: async (configService: ConfigService) => ({
         playground: false,
         debug: false,
+        cors: {
+          origin: true,
+          // origin: 'http://localhost:3000',
+          // origin: 'https://studio.apollographql.com',
+          credentials: true
+        },
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         typePaths: ['./src/**/*.graphql'],
         resolvers: { DateTime: GraphQLDateTime, Role: Role },
-        context: ({req}) => ({headers: req.headers}),
-        // context: ({req, res}: GqlContext) => ({req, res}),
+        // context: ({req}) => ({headers: req.headers}),
+        context: ({req, res}: GqlContext) => ({req, res, headers: req.headers}),
         subscriptions: {
           'graphql-ws': true,
           'subscriptions-transport-ws': true,
