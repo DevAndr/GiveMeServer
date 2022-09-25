@@ -19,7 +19,6 @@ export class UserController {
   }
 
   @Post()
-  @Public()
   @HttpCode(HttpStatus.OK)
   getCurrentUser(@GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
     console.log(uid);

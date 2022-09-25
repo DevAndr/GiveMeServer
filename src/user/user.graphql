@@ -28,6 +28,7 @@ input getUser {
 type Query {
   user(uid: String!): User
   users: [User]
+  currentUser: User
 }
 
 
