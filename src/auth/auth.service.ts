@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, SignUpDto } from "./dto/auth.dto";
 import * as argon from 'argon2';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
@@ -17,12 +17,13 @@ export class AuthService {
               private readonly jwtService: JwtService) {
   }
 
-  async signUpLocal(authDto: AuthDto): Promise<Tokens> {
+  async signUpLocal(authDto: SignUpDto): Promise<Tokens> {
     const hash = await argon.hash(authDto.password);
 
     const newUser = await this.prismaService.user.create({
       data: {
         email: authDto.email,
+        name: authDto.name,
         hash,
       },
     }).catch((e) => {
@@ -96,8 +97,8 @@ export class AuthService {
     };
 
     const [at, rt] = await Promise.all([
-      this.jwtService.signAsync(jwtPayload, { expiresIn: '15m', secret: this.config.get<string>('AT_SECRET') }),
-      this.jwtService.signAsync(jwtPayload, { expiresIn: '7d', secret: this.config.get<string>('RT_SECRET') }),
+      this.jwtService.signAsync(jwtPayload, { expiresIn: '7d', secret: this.config.get<string>('AT_SECRET') }),
+      this.jwtService.signAsync(jwtPayload, { expiresIn: '30d', secret: this.config.get<string>('RT_SECRET') }),
     ]);
 
     return {

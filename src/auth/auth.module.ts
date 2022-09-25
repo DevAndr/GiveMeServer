@@ -6,7 +6,6 @@ import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
-import { GqlAuthGuard } from '../common/decorators/guards';
 import { AuthResolver } from './auth.resolver';
 
 @Module({
