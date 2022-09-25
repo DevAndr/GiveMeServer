@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, WishList } from '@prisma/client';
-import { CreateWishListDto } from './dto/create-wish-list.dto';
-import { DeleteWishListDto } from './dto/delete-wish-list.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { Prisma, WishList } from "@prisma/client";
+import { CreateWishListDto } from "./dto/create-wish-list.dto";
+import { DeleteWishListDto } from "./dto/delete-wish-list.dto";
 
 @Injectable()
 export class WishListService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {
+  }
 
   async getAll(uidUser: string): Promise<any> {
     return await this.prismaService.wishList.findMany({
@@ -23,7 +24,7 @@ export class WishListService {
   async getListById(uid: string): Promise<WishList | null> {
     return await this.prismaService.wishList.findUnique({
       where: {
-        uid,
+        uid
       },
       include: {
         products: true
@@ -31,20 +32,29 @@ export class WishListService {
     });
   }
 
-  async addList(createWishListDto: CreateWishListDto): Promise<any> {
-    await this.prismaService.wishList.create({
+  async getListByIdForUser(where: Prisma.WishListUidUserUidCompoundUniqueInput): Promise<WishList | null> {
+    return await this.prismaService.wishList.findFirst({
+      where,
+      include: {
+        products: true
+      }
+    });
+  }
+
+  async addList(createWishListDto: CreateWishListDto): Promise<WishList | null> {
+    return await this.prismaService.wishList.create({
       data: {
-        ...createWishListDto,
-      },
+        ...createWishListDto
+      }
     });
   }
 
   async removeById(deleteWishListDto: DeleteWishListDto): Promise<any> {
-    const {uidUser, uid} = deleteWishListDto
+    const { uidUser, uid } = deleteWishListDto;
     console.log(uidUser);
     return await this.prismaService.wishList.delete({
       where: {
-        uid: deleteWishListDto.uid,
+        uidUser_uid: deleteWishListDto
       },
       include: {
         products: true
@@ -55,8 +65,8 @@ export class WishListService {
   async removeAll(uidUser: string): Promise<any> {
     return await this.prismaService.wishList.deleteMany({
       where: {
-        uidUser,
-      },
+        uidUser
+      }
     });
   }
 }
