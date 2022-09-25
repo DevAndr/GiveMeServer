@@ -7,5 +7,8 @@ export const ResGql = createParamDecorator(
 );
 
 export const GqlUser = createParamDecorator(
-  (data, [root, args, ctx, info]): User => ctx.req && ctx.req.user,
+  (data, [root, args, ctx, info]): User => {
+    console.log('GqlUser', ctx.req);
+    return ctx.req && ctx.req.user
+  },
 );

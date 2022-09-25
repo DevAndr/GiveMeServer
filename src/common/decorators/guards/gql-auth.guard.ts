@@ -17,8 +17,8 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
 
       return request;
     } else {
-      console.log("graphql");
       const ctxGql = GqlExecutionContext.create(ctx);
+      console.log(ctxGql.getContext().req);
       return ctxGql.getContext().req;
     }
   }

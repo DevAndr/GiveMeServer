@@ -1,9 +1,16 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { JwtPayloadWithRt } from '../../auth/types';
+import { JwtPayload, JwtPayloadWithRt } from "../../auth/types";
+import { GqlExecutionContext } from "@nestjs/graphql";
 
 export const GetCurrentUser = createParamDecorator((data: keyof JwtPayloadWithRt| undefined, ctx: ExecutionContext) => {
-  const req = ctx.switchToHttp().getRequest()
-  console.log('GetCurrentUser');
-  if (!data) return req.user
-  return req.user[data]
+  if (ctx.getType() === 'http') {
+    const req = ctx.switchToHttp().getRequest()
+    if (!data) return req.user
+    return req.user[data]
+  }
+
+  const ctxGql = GqlExecutionContext.create(ctx)
+  const user = ctxGql.getContext().req.user
+  // console.log('user', user);
+  return user[data]
 })
