@@ -13,6 +13,23 @@ export class InputLogIn {
     password?: Nullable<string>;
 }
 
+export class InputSignUp {
+    name?: Nullable<string>;
+    email?: Nullable<string>;
+    password?: Nullable<string>;
+}
+
+export class InputRefresh {
+    refreshToken?: Nullable<string>;
+}
+
+export class InputAddProductToList {
+    name?: Nullable<string>;
+    link?: Nullable<string>;
+    description?: Nullable<string>;
+    labels?: Nullable<Nullable<string>[]>;
+}
+
 export class CreateUserInput {
     uid?: Nullable<string>;
 }
@@ -25,12 +42,60 @@ export class GetUser {
     uid?: Nullable<string>;
 }
 
+export class InputCreateList {
+    name?: Nullable<string>;
+    description?: Nullable<string>;
+    uidUser?: Nullable<string>;
+}
+
+export class InputRemoveList {
+    uid?: Nullable<string>;
+    uidUser?: Nullable<string>;
+}
+
+export interface IData {
+    data?: Nullable<Object>;
+}
+
+export class CheckAuthData {
+    isAuth?: Nullable<boolean>;
+}
+
+export class Tokens {
+    access_token?: Nullable<string>;
+    refresh_token?: Nullable<string>;
+}
+
+export abstract class IQuery {
+    abstract checkAuth(): Nullable<CheckAuthData> | Promise<Nullable<CheckAuthData>>;
+
+    abstract user(uid: string): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
+
+    abstract currentUser(): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract wishListsCurrentUser(): Nullable<Nullable<WishList>[]> | Promise<Nullable<Nullable<WishList>[]>>;
+
+    abstract wishLisByIdForUser(uidUser?: Nullable<string>, uidList?: Nullable<string>): Nullable<WishList> | Promise<Nullable<WishList>>;
+}
+
 export abstract class IMutation {
-    abstract login(data?: Nullable<InputLogIn>): User | Promise<User>;
+    abstract logIn(data?: Nullable<InputLogIn>): Tokens | Promise<Tokens>;
+
+    abstract signUp(data?: Nullable<InputSignUp>): Tokens | Promise<Tokens>;
+
+    abstract refresh(): Tokens | Promise<Tokens>;
+
+    abstract addToList(data?: Nullable<InputAddProductToList>): Product | Promise<Product>;
 
     abstract createUser(createUserInput: CreateUserInput): User | Promise<User>;
 
     abstract findUser(findUserInput: FindUserInput): Nullable<User> | Promise<Nullable<User>>;
+
+    abstract createList(data?: Nullable<InputCreateList>): Nullable<WishList> | Promise<Nullable<WishList>>;
+
+    abstract removeList(uid?: Nullable<string>): Nullable<WishList> | Promise<Nullable<WishList>>;
 }
 
 export class Product {
@@ -47,7 +112,10 @@ export class Product {
     uid?: Nullable<string>;
     labels?: Nullable<Nullable<string>[]>;
     uidReceiver?: Nullable<string>;
+    descriptionReceiver: string;
     wishList?: Nullable<WishList>;
+    likes?: Nullable<number>;
+    disLikes?: Nullable<number>;
 }
 
 export class User {
@@ -60,14 +128,6 @@ export class User {
     wishLists?: Nullable<Nullable<WishList>[]>;
 }
 
-export abstract class IQuery {
-    abstract user(uid: string): Nullable<User> | Promise<Nullable<User>>;
-
-    abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
-
-    abstract wishListForUser(uidUser?: Nullable<string>): Nullable<Nullable<WishList>[]> | Promise<Nullable<Nullable<WishList>[]>>;
-}
-
 export class WishList {
     uid?: Nullable<string>;
     name?: Nullable<string>;
@@ -77,6 +137,13 @@ export class WishList {
     products?: Nullable<Nullable<Product>[]>;
 }
 
+export abstract class ISubscription {
+    abstract listCreated(uidUser: string): Nullable<WishList> | Promise<Nullable<WishList>>;
+
+    abstract list(uidUser: string): Nullable<WishList> | Promise<Nullable<WishList>>;
+}
+
+export type Object = any;
 export type DateTime = any;
 export type Role = any;
 type Nullable<T> = T | null;

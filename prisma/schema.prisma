@@ -42,6 +42,8 @@ model Product {
   price       Int
   royalties   Int
   delivery    Int
+  likes Int
+  disLikes Int
   marketPlace TypeMarketPlace
   link        String
   img         String
@@ -50,6 +52,7 @@ model Product {
   uid         String          @id @unique @default(uuid())
   labels      String[]
   uidReceiver String
+  descriptionReceiver String?
   wishList    WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("products")
