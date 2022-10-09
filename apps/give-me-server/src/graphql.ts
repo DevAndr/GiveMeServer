@@ -8,11 +8,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum MarketType {
-    OZON = "OZON",
-    WB = "WB"
-}
-
 export enum Access {
     PUBLIC = "PUBLIC",
     PRIVATE = "PRIVATE"
@@ -38,7 +33,6 @@ export class InputAddProductToList {
     name?: Nullable<string>;
     link?: Nullable<string>;
     description?: Nullable<string>;
-    marketPlace?: Nullable<MarketType>;
     labels?: Nullable<Nullable<string>[]>;
 }
 

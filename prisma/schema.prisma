@@ -28,6 +28,7 @@ model WishList {
   uid         String    @id @unique @default(uuid())
   name        String
   description String?
+  access      Access @default(PUBLIC)
   uidUser     String
   user        User      @relation(fields: [uidUser], references: [uid], onDelete: Cascade, onUpdate: Cascade)
   products    Product[]
@@ -42,16 +43,16 @@ model Product {
   price       Int
   royalties   Int
   delivery    Int
-  likes Int
-  disLikes Int
+  likes Int @default(0)
+  disLikes Int @default(0)
   marketPlace TypeMarketPlace
   link        String
   img         String
-  status      StatusOrder
+  status      StatusOrder @default(VALIDATION)
   uidWishList String?
   uid         String          @id @unique @default(uuid())
   labels      String[]
-  uidReceiver String
+  uidReceiver String?
   descriptionReceiver String?
   wishList    WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
 
@@ -95,6 +96,11 @@ model Rates {
   @@map("rates")
 }
 
+enum Access {
+    PUBLIC
+    PRIVATE
+}
+
 enum Role {
   USER
   ADMIN
@@ -106,6 +112,7 @@ enum TypeMarketPlace {
 }
 
 enum StatusOrder {
+  VALIDATION
   DELIVERY
   DELIVERED
   CANCELLED
