@@ -19,7 +19,8 @@ export class ParserController {
 
       if (parsedData.img && parsedData.price && parsedData.name) {
         channel.ack(msg);
-        this.parsedClient.emit("PARSED_DATA", {parsedData: {...data?.product, ...parsedData, marketPlace: "OZON" }, uidUser: data.uidUser});
+        this.parsedClient.emit("PARSED_DATA", {parsedData: {...data?.product,
+            ...parsedData, marketPlace: "OZON", status: "ACTIVE" }, uidUser: data.uidUser});
         this.logger.log(parsedData)
       }
     }
@@ -36,7 +37,8 @@ export class ParserController {
       const parsedData = await this.parserService.parseWBPage(link)
       if (parsedData.img && parsedData.price && parsedData.name) {
         channel.ack(msg);
-        this.parsedClient.emit("PARSED_DATA", {parsedData: {...data?.product, ...parsedData, marketPlace: "WB" }, uidUser: data.uidUser});
+        this.parsedClient.emit("PARSED_DATA", {parsedData: {...data?.product,
+            ...parsedData, marketPlace: "WB", status: "ACTIVE" }, uidUser: data.uidUser});
         this.logger.log(parsedData)
       }
     }
