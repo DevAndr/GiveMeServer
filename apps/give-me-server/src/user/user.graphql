@@ -2,7 +2,6 @@ scalar DateTime
 scalar Role
 
 type User {
-  # Example field (placeholder)
   uid: String!
   name: String
   email: String
@@ -12,8 +11,9 @@ type User {
   wishLists: [WishList]
 }
 
-input CreateUserInput {
-  uid: String
+input UpdateUserInput {
+  name: String
+  email: String
 }
 
 input FindUserInput {
@@ -24,15 +24,13 @@ input getUser {
   uid: String
 }
 
-
 type Query {
   user(uid: String!): User
   users: [User]
   currentUser: User
 }
 
-
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
-  findUser(findUserInput: FindUserInput!): User
+  updateUser(uid: String!, params: UpdateUserInput!): User!
+  findUser( findUserInput: FindUserInput!): User
 }

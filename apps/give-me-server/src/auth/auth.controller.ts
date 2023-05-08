@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, HttpStatus, Post, Redirect, Request, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, SignUpDto } from "./dto/auth.dto";
 import { Tokens } from './types';
@@ -38,7 +38,25 @@ export class AuthController {
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser('refreshToken') refreshToken: string): Promise<Tokens> {;
+  async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser('refreshToken') refreshToken: string): Promise<Tokens> {
     return this.authService.refreshToken(uid, refreshToken);
+  }
+
+  @Get('twitch')
+  @Public()
+  @Redirect('https://id.twitch.tv/oauth2/authorize/?response_type=token' +
+      '&client_id=hof5gwx0su6owfnys0yan9c87zr6t' +
+      '&redirect_uri=http://localhost:3030/grapphql' +
+      '&scope=channel%3Amanage%3Apolls+channel%3Aread%3Apolls')
+  @HttpCode(HttpStatus.OK)
+  async authTwitch(@Request() req){
+
+  }
+
+  @Get('twitch/redirect')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  async authTwitchRedirect(){
+
   }
 }

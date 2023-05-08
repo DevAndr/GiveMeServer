@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { WishListService } from "./wish-list.service";
 import { GetCurrentUserId, Public } from "../common/decorators";
-import { WishList } from "../graphql";
+import { WishList } from "../schema/graphql";
 import { PubSubEngine } from "graphql-subscriptions";
 import { ExecutionContext, Inject, Req, UseGuards } from "@nestjs/common";
 import { GqlContext } from "../app.module";
