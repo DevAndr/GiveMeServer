@@ -45,6 +45,7 @@
     "amqp-connection-manager": "^4.1.7",
     "amqplib": "^0.10.3",
     "argon2": "^0.30.3",
+    "axios": "^1.4.0",
     "bull": "^4.10.4",
     "bullmq": "^3.13.0",
     "cheerio": "^1.0.0-rc.12",
