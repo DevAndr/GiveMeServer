@@ -118,6 +118,8 @@ export abstract class IMutation {
 
     abstract refresh(): Tokens | Promise<Tokens>;
 
+    abstract twitch(code: string): Tokens | Promise<Tokens>;
+
     abstract addToList(data?: Nullable<InputAddProductToList>): Nullable<Product> | Promise<Nullable<Product>>;
 
     abstract updateProduct(data?: Nullable<InputUpdateEditorProduct>): Nullable<Product> | Promise<Nullable<Product>>;

@@ -85,4 +85,35 @@ export class AuthResolver {
 
     return tokens;
   }
+
+
+  @Public()
+  // @UseGuards(RtGuard)
+  @Mutation("twitch")
+  async twitch(@Args("code") code: string,
+               @GetCurrentUserId() uid: string,
+               @GetCurrentUser("refreshToken") refreshToken: string,
+               @Context() context: GqlContext): Promise<Tokens | null> {
+
+    const tokens = await this.authService.getTokensTwitch(code);
+
+    if (tokens) {
+      // @ts-ignore
+      context.req.res.cookie("access_token", `${tokens.access_token}`, {
+        httpOnly: false,
+        maxAge: tokens.expires_in
+      });
+
+      // @ts-ignore
+      context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
+        httpOnly: false,
+        maxAge: tokens.expires_in
+      });
+
+      return { ...tokens } as Tokens;
+    }
+
+    return null;
+  }
+
 }

@@ -10,7 +10,10 @@ export const GetCurrentUser = createParamDecorator((data: keyof JwtPayloadWithRt
   }
 
   const ctxGql = GqlExecutionContext.create(ctx)
-  const user = ctxGql.getContext().req.user
-  // console.log('user', user);
+  const user = ctxGql.getContext().req?.user
+  // console.log('user', user, data);
+  if (!user)
+    return null
+
   return user[data]
 })
