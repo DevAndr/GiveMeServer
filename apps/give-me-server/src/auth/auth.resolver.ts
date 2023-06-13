@@ -21,23 +21,11 @@ export class AuthResolver {
 
   @Public()
   @Mutation("logIn")
-  async login(@Args("data") authDto: AuthDto,
-              @Context() context: GqlContext,
-              @Cookies("uid") uid: String
+  async logIn(@Args("data") authDto: AuthDto,
+              @Context() context: GqlContext, @Cookies("uid") uid: String
   ): Promise<Tokens> {
     const tokens = await this.authService.signInLocal(authDto);
-    // @ts-ignore
-    context.req.res.cookie("access_token", `${tokens.access_token}`, {
-      httpOnly: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7
-    });
-
-    // @ts-ignore
-    context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
-      httpOnly: false,
-      maxAge: 1000 * 60 * 60 * 24 * 30
-
-    });
+    this.setTokensCookie(tokens)
 
     return tokens;
   }
@@ -47,17 +35,7 @@ export class AuthResolver {
   async signUp(@Args("data") authDto: SignUpDto, @Context() context: GqlContext): Promise<Tokens> {
     const maxAge = new Date().getTime() + 60000;
     const tokens = await this.authService.signUpLocal(authDto);
-    // @ts-ignore
-    context.req.res.cookie("access_token", `${tokens.access_token}`, {
-      httpOnly: false,
-      maxAge
-    });
-
-    // @ts-ignore
-    context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
-      httpOnly: false,
-      maxAge
-    });
+    this.setTokensCookie(tokens)
 
     return tokens;
   }
@@ -70,18 +48,7 @@ export class AuthResolver {
                      @Context() context: GqlContext): Promise<Tokens> {
 
     const tokens = await this.authService.refreshToken(uid, refreshToken);
-
-    // @ts-ignore
-    context.req.res.cookie("access_token", `${tokens.access_token}`, {
-      httpOnly: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7
-    });
-
-    // @ts-ignore
-    context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
-      httpOnly: false,
-      maxAge: 1000 * 60 * 60 * 24 * 30
-    });
+   this.setTokensCookie(tokens)
 
     return tokens;
   }
@@ -98,17 +65,7 @@ export class AuthResolver {
     const tokens = await this.authService.getTokensTwitch(code);
 
     if (tokens) {
-      // @ts-ignore
-      context.req.res.cookie("access_token", `${tokens.access_token}`, {
-        httpOnly: false,
-        maxAge: tokens.expires_in
-      });
-
-      // @ts-ignore
-      context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
-        httpOnly: false,
-        maxAge: tokens.expires_in
-      });
+      this.setTokensCookie(tokens)
 
       return { ...tokens } as Tokens;
     }
@@ -116,4 +73,18 @@ export class AuthResolver {
     return null;
   }
 
+
+  setTokensCookie(tokens: Tokens) {
+    // @ts-ignore
+    context.req.res.cookie("access_token", `${tokens.access_token}`, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    });
+
+    // @ts-ignore
+    context.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30
+    });
+  }
 }
