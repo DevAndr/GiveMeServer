@@ -28,7 +28,7 @@ model WishList {
   uid         String    @id @unique @default(uuid())
   name        String
   description String?
-  access      Access @default(PUBLIC)
+  access      Access    @default(PUBLIC)
   uidUser     String
   user        User      @relation(fields: [uidUser], references: [uid], onDelete: Cascade, onUpdate: Cascade)
   products    Product[]
@@ -38,23 +38,24 @@ model WishList {
 }
 
 model Product {
-  name        String
-  description String?
-  price       Int
-  royalties   Int
-  delivery    Int
-  likes Int @default(0)
-  disLikes Int @default(0)
-  marketPlace TypeMarketPlace
-  link        String
-  img         String
-  status      StatusOrder @default(VALIDATION)
-  uidWishList String?
-  uid         String          @id @unique @default(uuid())
-  labels      String[]
-  uidReceiver String?
+  name                String
+  description         String?
+  price               Int
+  royalties           Int
+  delivery            Int
+  likes               Int             @default(0)
+  disLikes            Int             @default(0)
+  marketPlace         TypeMarketPlace
+  link                String
+  img                 String
+  status              StatusOrder     @default(VALIDATION)
+  uidWishList         String?
+  uid                 String          @id @unique @default(uuid())
+  labels              String[]
+  uidReceiver         String?
   descriptionReceiver String?
-  wishList    WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  wishList            WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  Order               Order[]
 
   @@map("products")
 }
@@ -65,17 +66,20 @@ model Order {
   description String?
   price       Int
   status      StatusOrder
+  uidProduct  String
+  product     Product     @relation(fields: [uidProduct], references: [uid], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("orders")
 }
 
 model Sender {
-  uid       String  @id @unique @default(uuid())
-  firstName String
-  lastName  String
-  email     String
-  nickname  String?
-  wishes    String?
+  uid          String         @id @unique @default(uuid())
+  firstName    String
+  lastName     String
+  email        String
+  nickname     String?
+  wishes       String?
+  Transactions Transactions[]
 
   @@map("senders")
 }
@@ -96,9 +100,35 @@ model Rates {
   @@map("rates")
 }
 
+model Transactions {
+  uid         String            @unique @default(uuid())
+  created     DateTime          @default(now())
+  senderUID   String
+  sender      Sender            @relation(fields: [senderUID], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  amount      Int
+  typePayment TypePayment
+  status      StatusTransaction
+
+  @@id([uid])
+  @@map("transactions")
+}
+
+enum StatusTransaction {
+  DONE
+  FAILED
+  ERROR
+  CANCELED_BY_SENDER
+  CANCELED_BY_PROVIDER
+  PROCESSING
+}
+
+enum TypePayment {
+  Cart
+}
+
 enum Access {
-    PUBLIC
-    PRIVATE
+  PUBLIC
+  PRIVATE
 }
 
 enum Role {
@@ -109,6 +139,7 @@ enum Role {
 enum TypeMarketPlace {
   OZON
   WB
+  // ALIEXPRESS
 }
 
 enum StatusOrder {
