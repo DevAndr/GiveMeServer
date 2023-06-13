@@ -15,9 +15,7 @@ import {ConfigModule, ConfigService} from "@nestjs/config";
 import {PubSub} from "graphql-subscriptions";
 import {
     ApolloServerPluginLandingPageLocalDefault,
-    ApolloServerPluginLandingPageProductionDefault
 } from "@apollo/server/plugin/landingPage/default";
-import {ApolloServerPluginLandingPageDisabled} from "@apollo/server/plugin/disabled";
 import {Role} from "@prisma/client";
 import {
     GraphQLDateTime
@@ -60,7 +58,7 @@ export interface GqlContext {
                 typePaths: ["./**/*.graphql"],
                 resolvers: {DateTime: GraphQLDateTime, Role: Role},
                 // context: ({req}) => ({headers: req.headers}),
-                context: ({req, res, extra}: GqlContext) => ({req, res}),
+                context: (ctx: GqlContext) => ({...ctx}),
                 subscriptions: {
                     "graphql-ws": true,
                     //   {
@@ -84,7 +82,8 @@ export interface GqlContext {
     ],
     providers: [
         {
-            provide: APP_GUARD, useClass: GqlAuthGuard
+            provide: APP_GUARD,
+            useClass: GqlAuthGuard
         },
         {
             provide: "PUB_SUB",
