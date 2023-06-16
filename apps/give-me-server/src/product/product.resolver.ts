@@ -14,7 +14,7 @@ export class ProductResolver {
               @Inject(PARSER_SERVICE) private readonly parserClient: ClientProxy) {
   }
 
-  @Public()
+  // @Public()
   @Query("productsWishList")
   async productsWishList(@Args("uidWishList") uidWishList: string) {
     return await this.productService.productsWishList(uidWishList);
