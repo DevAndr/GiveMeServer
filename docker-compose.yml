@@ -5,7 +5,7 @@ services:
     image: postgres
     container_name: give-me-postgres
     ports:
-      - "5432:5432"
+      - "5436:5432"
     volumes:
       - .:/docker-entrypoint-initdb.d
     environment:
@@ -25,5 +25,12 @@ services:
     image: redis
     container_name: give-me-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
+    restart: unless-stopped
+
+  rabbitMQ:
+    image: rabbitmq:management-alpine
+    container_name: give-me-rabbitMQ
+    ports:
+      - "6381:6379"
     restart: unless-stopped

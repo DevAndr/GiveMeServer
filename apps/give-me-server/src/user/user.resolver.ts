@@ -1,6 +1,6 @@
 import {Resolver, Query, Mutation, Args, Context, ResolveField, Parent} from '@nestjs/graphql';
 import {UserService} from './user.service';
-import {WishList, User, CreateUserInput} from '../schema/graphql';
+import {WishList, User} from '../schema/graphql';
 import {WishListService} from '../wish-list/wish-list.service';
 import {GetCurrentUserId, Public} from "../common/decorators";
 import {UpdateUserInput} from "../../../../src/schema/graphql";

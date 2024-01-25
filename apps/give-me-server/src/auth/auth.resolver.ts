@@ -26,7 +26,6 @@ export class AuthResolver {
     ): Promise<Tokens> {
         const tokens = await this.authService.signInLocal(authDto);
         this.setTokensCookie(context, tokens)
-
         return tokens;
     }
 
@@ -36,7 +35,6 @@ export class AuthResolver {
         const maxAge = new Date().getTime() + 60000;
         const tokens = await this.authService.signUpLocal(authDto);
         this.setTokensCookie(context, tokens)
-
         return tokens;
     }
 

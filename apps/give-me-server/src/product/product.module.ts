@@ -64,7 +64,7 @@ import { ParsedEventService } from "./parsed.event.service";
           type: 'topic',
         },
       ],
-      uri: 'amqp://guest:guest@localhost:5672',
+      uri: 'amqp://guest:guest@localhost:6380',
       connectionInitOptions: { wait: false },
     }),
   ],
@@ -72,4 +72,5 @@ import { ParsedEventService } from "./parsed.event.service";
   providers: [ProductService, ProductResolver, ParsedEventService]
 })
 export class ProductModule {
+
 }
