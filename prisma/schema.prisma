@@ -134,6 +134,7 @@ enum Access {
 enum Role {
   USER
   ADMIN
+  GUEST
 }
 
 enum TypeMarketPlace {
