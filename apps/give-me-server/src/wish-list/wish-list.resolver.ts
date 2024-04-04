@@ -1,13 +1,14 @@
 import { Args, Context, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { WishListService } from "./wish-list.service";
 import { GetCurrentUserId, Public } from "../common/decorators";
-import { WishList } from "../graphql";
+import { WishList } from "../schema/graphql";
 import { PubSubEngine } from "graphql-subscriptions";
 import { ExecutionContext, Inject, Req, UseGuards } from "@nestjs/common";
 import { GqlContext } from "../app.module";
 import { AtWsGuard } from "../common/decorators/guards/at.ws.guard";
 import { WsArgumentsHost } from "@nestjs/common/interfaces";
 import { UpdateWishListDto } from "./dto/update-wish-list.dto";
+import {Roles} from "../common/decorators/roles.decorator";
 
 @Resolver("wish-list")
 export class WishListResolver {
@@ -26,6 +27,7 @@ export class WishListResolver {
     return this.wishListService.getListByIdForUser({ uidUser, uid: uidList });
   }
 
+  @Roles("ADMIN")
   @Mutation("createList")
   async createList(@Args("data") data, @GetCurrentUserId() uid: string) {
     console.log(data, uid);
@@ -35,6 +37,7 @@ export class WishListResolver {
     return newList;
   }
 
+  @Roles("ADMIN")
   @Mutation("removeList")
   async removeList(@Args("uid") uid, @GetCurrentUserId() uidUser: string) {
     const deletedList = await this.wishListService.removeById({uid, uidUser });
@@ -43,6 +46,7 @@ export class WishListResolver {
     return deletedList;
   }
 
+  @Roles("ADMIN")
   @Mutation("updateList")
   async updateList(@Args("data") data: UpdateWishListDto, @GetCurrentUserId() uidUser: string) {
     // data.uidUser = uidUser

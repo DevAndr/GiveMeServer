@@ -4,7 +4,7 @@ import { join } from 'path';
 const definitionsFactory = new GraphQLDefinitionsFactory();
 definitionsFactory.generate({
   typePaths: ['./**/*.graphql'],
-  path: join(process.cwd(), 'src/graphql.ts'),
+  path: join(process.cwd(), 'src/schema/graphql.ts'),
   outputAs: 'class',
   watch: true,
 });

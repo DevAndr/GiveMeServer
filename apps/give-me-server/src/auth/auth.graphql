@@ -37,4 +37,6 @@ type Mutation {
     logIn(data: InputLogIn): Tokens!
     signUp(data: InputSignUp): Tokens!
     refresh: Tokens!
+
+    twitch(code: String!): Tokens!
 }

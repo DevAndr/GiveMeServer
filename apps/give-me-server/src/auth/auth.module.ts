@@ -9,9 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthResolver } from './auth.resolver';
 
 @Module({
-  imports: [UserModule, PrismaModule, JwtModule.register({
-
-  })],
+  imports: [UserModule, PrismaModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, AtStrategy, RtStrategy, ConfigService, AuthResolver],
 })
