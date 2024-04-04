@@ -29,15 +29,8 @@ export class WebSocketService implements OnGatewayConnection {
 
 	@SubscribeMessage('create-alert')
 	createHandleEvent(client: Socket, data: any) {
+		data.giver = Date.now().toString()
 		this.clients.get(data.hashUser).emit(`notifications/${data.hashUser}`, data)
 		console.log('create alert', data)
 	}
-
-	// @SubscribeMessage('notifications')
-	// handleEvent(client: Socket, data: any) {
-	// 	console.log('handleEvent', data)
-	// 	data += ' some text'
-	// 	// client.emit('notifications', data)
-	// 	return data
-	// }
 }

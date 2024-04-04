@@ -5,9 +5,9 @@ services:
     image: postgres
     container_name: give-me-postgres
     ports:
-      - '5432:5432'
+      - '5436:5432'
     volumes:
-      - .:/docker-entrypoint-initdb.d
+      - .:/docker-entrypoint-give-me-initdb.d
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: '123456789'
@@ -20,13 +20,14 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    networks:
+      - give-me-networks
 
   redis:
     image: redis:alpine3.19
     container_name: give-me-redis
     ports:
       - '6379:6379'
-      - '8081:8081'
     restart: unless-stopped
     volumes:
       - './data/redis:/data'
