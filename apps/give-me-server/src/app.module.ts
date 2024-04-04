@@ -31,16 +31,6 @@ export interface GqlContext {
 @Module({
     imports: [
         ConfigModule.forRoot({isGlobal: true, envFilePath: '.env'}),
-        // GraphQLModule.forRoot<ApolloDriverConfig>({
-        //   typePaths: ['./**/*.graphql'],
-        //   path: '/graphql',
-        //   driver: ApolloDriver,
-        //   playground: false,
-        //   plugins: [
-        //     ApolloServerPluginLandingPageLocalDefault()
-        //   ]
-        // }),
-
         GraphQLModule.forRootAsync<ApolloDriverConfig>({
             imports: [ConfigModule],
             inject: [ConfigService],

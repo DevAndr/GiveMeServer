@@ -8,6 +8,7 @@ import * as cookieParser from 'cookie-parser';
 async function run() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+  app.useGlobalPipes(new ValidationPipe());
   app.enableCors(
     { origin: true, credentials: true }
   );
@@ -19,8 +20,6 @@ async function run() {
       port: process.env.REDIS_PORT,
     },
   });
-
-  app.useGlobalPipes(new ValidationPipe());
 
   await app.startAllMicroservices()
   await app.listen(process.env.PORT);

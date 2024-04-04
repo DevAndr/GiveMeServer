@@ -8,16 +8,19 @@ datasource db {
 }
 
 model User {
-  id        Int        @default(autoincrement())
-  email     String     @unique
-  uid       String     @unique @default(uuid())
-  name      String?
-  role      Role       @default(USER)
-  createAt  DateTime   @default(now())
-  updateAt  DateTime   @updatedAt
-  hash      String
-  hasheRt   String?
-  wishLists WishList[]
+  id          Int        @default(autoincrement())
+  email       String     @unique
+  uid         String     @unique @default(uuid())
+  name        String?
+  role        Role       @default(USER)
+  createAt    DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
+  hash        String
+  hasheRt     String?
+  wishLists   WishList[]
+  description String?
+  avatar      Bytes?
+  links       String[]
 
   @@id([uid, id])
   @@unique([uid, id])
@@ -66,8 +69,7 @@ model Order {
   description String?
   price       Int
   status      StatusOrder
-  uidProduct  String
-  product     Product     @relation(fields: [uidProduct], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  products    Product[]
 
   @@map("orders")
 }
@@ -103,8 +105,8 @@ model Rates {
 model Transactions {
   uid         String            @unique @default(uuid())
   created     DateTime          @default(now())
-  senderUID   String
-  sender      Sender            @relation(fields: [senderUID], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  senderId    String
+  sender      Sender            @relation(fields: [senderId], references: [uid], onDelete: Cascade, onUpdate: Cascade)
   amount      Int
   typePayment TypePayment
   status      StatusTransaction
@@ -116,6 +118,7 @@ model Transactions {
 enum StatusTransaction {
   DONE
   FAILED
+  WAITING
   ERROR
   CANCELED_BY_SENDER
   CANCELED_BY_PROVIDER
@@ -124,6 +127,7 @@ enum StatusTransaction {
 
 enum TypePayment {
   Cart
+  SBP
 }
 
 enum Access {
