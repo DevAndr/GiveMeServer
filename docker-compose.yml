@@ -5,16 +5,16 @@ services:
     image: postgres
     container_name: give-me-postgres
     ports:
-      - "5436:5432"
+      - '5436:5432'
     volumes:
       - .:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "123456789"
-      POSTGRES_DB: "give-me-db"
-      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: '123456789'
+      POSTGRES_DB: 'give-me-db'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d give-me-db" ]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d give-me-db']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,15 +22,35 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis
+    image: redis:alpine3.19
     container_name: give-me-redis
     ports:
-      - "6380:6379"
+      - '6379:6379'
+      - '8081:8081'
     restart: unless-stopped
+    volumes:
+      - './data/redis:/data'
+    networks:
+      - give-me-networks
 
   rabbitMQ:
     image: rabbitmq:management-alpine
     container_name: give-me-rabbitMQ
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
     ports:
-      - "6381:6379"
+      - '5672:5672'
+      - '15672:15672'
+      - '15692:15692'
     restart: unless-stopped
+    volumes:
+      - './data/rabbitmq:/var/lib/rabbitmq'
+    networks:
+      - give-me-networks
+
+networks:
+  give-me-networks:
+    driver: bridge

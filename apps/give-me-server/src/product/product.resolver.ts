@@ -11,10 +11,8 @@ import { MarketType } from "../../../../src/graphql";
 @Resolver("product")
 export class ProductResolver {
   constructor(private readonly productService: ProductService,
-              @Inject(PARSER_SERVICE) private readonly parserClient: ClientProxy) {
-  }
+              @Inject(PARSER_SERVICE) private readonly parserClient: ClientProxy) {}
 
-  // @Public()
   @Query("productsWishList")
   async productsWishList(@Args("uidWishList") uidWishList: string) {
     return await this.productService.productsWishList(uidWishList);
