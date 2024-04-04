@@ -104,3 +104,4 @@ dist
 prisma/migrations
 yarn.lock
 package-lock.json
+/data/
