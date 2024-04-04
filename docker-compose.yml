@@ -5,7 +5,7 @@ services:
     image: postgres
     container_name: give-me-postgres
     ports:
-      - '5436:5432'
+      - '5432:5432'
     volumes:
       - .:/docker-entrypoint-initdb.d
     environment:
