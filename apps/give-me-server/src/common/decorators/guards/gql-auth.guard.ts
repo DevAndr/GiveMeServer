@@ -22,7 +22,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
             console.log("gql");
 
             const ctxGql = GqlExecutionContext.create(ctx);
-            // console.log(ctxGql.getContext().req);
+            console.log(ctxGql.getContext().req.user);
             return ctxGql.getContext().req;
         }
     }
@@ -32,25 +32,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
             ctx.getHandler(),
             ctx.getClass()
         ]);
-
-        // try {
-        //     // const payload = await this.jwtService.verifyAsync(token, {
-        //     //   secret: jwtConstants.secret,
-        //     // });
-        //
-        //     // console.log('GqlAuthGuard', ctx)
-        //
-        //     if (ctx.getType() !== 'http') {
-        //         const ctxGql = GqlExecutionContext.create(ctx);
-        //         const req = ctxGql.getContext().req
-        //         const token = Utils.getTokenFromHeader(req)
-        //         console.log('GqlAuthGuard', token)
-        //
-        //     }
-        // } catch (e) {
-        //     console.log("GqlAuthGuard ERROR:", e)
-        // }
-
+        
         return isPublic ? true : super.canActivate(ctx)
     }
 }

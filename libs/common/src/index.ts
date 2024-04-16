@@ -1,2 +1,2 @@
-export * from './rmqt/rmqt.module';
-export * from './rmqt/rmqt.service';
+export * from './rmq/rmq.module'
+export * from './rmq/rmq.service'

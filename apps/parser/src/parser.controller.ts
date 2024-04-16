@@ -1,13 +1,14 @@
-import { Body, Controller, Inject, Logger, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Logger, Post } from "@nestjs/common";
 import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from "@nestjs/microservices";
 import { ParserService } from "./parser.service";
+import { OZON_PARSER_EVENT, PARSER_SERVICE, WB_PARSER_EVENT } from "libs/common/constants";
 
 @Controller("parser")
 export class ParserController {
   private readonly logger = new Logger(ParserController.name);
-  constructor(private readonly parserService: ParserService, @Inject("PARSED_STREAM") private readonly parsedClient: ClientProxy) {}
+  constructor(private readonly parserService: ParserService, @Inject(PARSER_SERVICE) private readonly parsedClient: ClientProxy) {}
 
-  @MessagePattern("PARSE_OZON")
+  @MessagePattern(OZON_PARSER_EVENT)
   async onParseOzon(@Payload() data, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const msg = context.getMessage();
@@ -26,11 +27,14 @@ export class ParserController {
     }
   }
 
-  @MessagePattern("PARSE_WB")
+  @MessagePattern(WB_PARSER_EVENT)
   async onParseWB(@Payload() data, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const msg = context.getMessage();
     const {link} = data?.product
+
+    console.log('parse wb', link, msg);
+    
 
     if (link) {
       this.logger.log(`${link}`, 'onParseWB')
@@ -42,5 +46,11 @@ export class ParserController {
         this.logger.log(parsedData)
       }
     }
+  }
+
+  @Get('test')
+  async parseTest() {
+    const parsedData = await this.parserService.parseWBPage('https://www.wildberries.ru/catalog/63846890/detail.aspx')
+    return parsedData
   }
 }

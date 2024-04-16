@@ -3,10 +3,10 @@ import { ProductService } from "./product.service";
 import { GetCurrentUserId, Public } from "../common/decorators";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
-import { Inject } from "@nestjs/common";
-import { PARSER_SERVICE } from "../../../parser/src/constants";
+import { Inject } from "@nestjs/common"; 
 import { ClientProxy } from "@nestjs/microservices";
 import { MarketType } from "../../../../src/graphql";
+import { PARSER_SERVICE } from "libs/common/constants";
 
 @Resolver("product")
 export class ProductResolver {
@@ -24,6 +24,7 @@ export class ProductResolver {
     return await this.productService.update(product);
   }
 
+  @Public()
   @Mutation("addToList")
   async addToList(@Args("data") productDto: CreateProductDto, @GetCurrentUserId() uid: string) {
     const product = {

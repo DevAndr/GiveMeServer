@@ -22,7 +22,8 @@
     "prisma:studio": "npx prisma studio",
     "gen-types-graphql": "ts-node ./apps/give-me-server/src/generate-typings.ts",
     "prisma:gen": "prisma generate --watch",
-    "dev": "concurrently \"yarn:start:dev\" \"yarn:gen-types-graphql\" \"yarn:prisma:gen\""
+    "dev": "concurrently \"yarn:start:dev\" \"nest start --watch parser\" \"yarn:gen-types-graphql\" \"yarn:prisma:gen\"",
+    "parser": "concurrently \"nest start --watch parser\""
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",
@@ -43,7 +44,7 @@
     "@nestjs/platform-socket.io": "^10.3.7",
     "@nestjs/websockets": "^10.3.7",
     "@prisma-korea/graphql-schema-generator": "^0.3.0",
-    "@prisma/client": "^5.8.1",
+    "@prisma/client": "^5.12.1",
     "@types/bcrypt": "^5.0.2",
     "@types/passport-jwt": "^4.0.0",
     "amqp-connection-manager": "^4.1.14",
@@ -65,6 +66,7 @@
     "graphql-upload": "^16.0.2",
     "install": "^0.13.0",
     "ioredis": "^5.3.2",
+    "joi": "^17.12.3",
     "nodemailer": "^6.9.8",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

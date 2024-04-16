@@ -3,10 +3,10 @@ import { Public } from "../common/decorators";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { MoveProductDto } from "./dto/move-product.dto";
-import { RemoveProductDto } from "./dto/remove-product.dto";
-import { PARSER_SERVICE } from "../../../parser/src/constants";
+import { RemoveProductDto } from "./dto/remove-product.dto"; 
 import { ClientProxy, Ctx, EventPattern, MessagePattern, Payload, RmqContext } from "@nestjs/microservices";
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
+import { PARSER_SERVICE } from "libs/common/constants";
 
 @Controller("product")
 export class ProductController {
@@ -72,7 +72,9 @@ export class ProductController {
     const msg = context.getMessage();
 
     channel.ack(msg);
-    console.log("PARSED_DATA", msg);
+    const {parsedData, uidUser} = data
+    console.log("API - PARSED_DATA", parsedData);
+    this.productService.update(parsedData);
   }
 
 }
