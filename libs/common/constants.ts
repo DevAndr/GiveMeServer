@@ -1,0 +1,5 @@
+export const PARSER_SERVICE = 'PARSER'
+export const NOTIFICATION_SERVICE = 'NOTIFICATION'
+
+export const WB_PARSER_EVENT = 'PARSE_WB'
+export const OZON_PARSER_EVENT = 'PARSE_OZON'

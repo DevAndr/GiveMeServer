@@ -3,10 +3,10 @@ import { ProductController } from "./product.controller";
 import { ProductService } from "./product.service";
 import { ProductResolver } from "./product.resolver";
 import { ClientsModule, Transport } from "@nestjs/microservices";
-import { RmqtModule } from "@app/common";
-import { PARSER_SERVICE } from "../../../parser/src/constants";
+import { RmqModule } from "@app/common"; 
 import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
 import { ParsedEventService } from "./parsed.event.service";
+import { PARSER_SERVICE } from "libs/common/constants";
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { ParsedEventService } from "./parsed.event.service";
     //     transport: Transport.TCP
     //   },
     // ]),
-    RmqtModule.register({name: PARSER_SERVICE}),
+    RmqModule.register({name: PARSER_SERVICE}),
     // ClientsModule.register([
     //   {
     //     name: PARSER_SERVICE,

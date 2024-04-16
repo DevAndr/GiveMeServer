@@ -1,26 +1,16 @@
-import { Module } from '@nestjs/common';
-import { RmqtModule } from "@app/common";
+import { Module } from '@nestjs/common'; 
 import { ParserController } from './parser.controller';
-import { ParserService } from "./parser.service";
-import { ClientsModule, Transport } from "@nestjs/microservices";
-import { PARSER_SERVICE } from "./constants";
-
+import { ParserService } from "./parser.service"; 
+import { RmqModule } from '@app/common';
+import { ConfigModule } from '@nestjs/config';
+import { PARSER_SERVICE } from 'libs/common/constants'; 
 @Module({
   imports: [
-    // RmqtModule.register({name: "PARSED_STREAM"})
-    ClientsModule.register([
-      {
-        name: 'PARSED_STREAM',
-        transport: Transport.RMQ,
-        options: {
-          urls: ["amqp://guest:guest@localhost:5672"],
-          queue: `PARSED_DATA_QUEUE`,
-          queueOptions: {
-            durable: true
-          },
-        }
-      }
-    ])
+    ConfigModule.forRoot({
+      isGlobal: true, 
+      envFilePath: './apps/parser/.env'
+    }),
+    RmqModule.register({name: PARSER_SERVICE}),
   ],
   controllers: [ParserController],
   providers: [ParserService],

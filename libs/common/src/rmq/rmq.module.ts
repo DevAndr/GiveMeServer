@@ -1,34 +1,32 @@
 import { DynamicModule, Module } from "@nestjs/common";
-import { RmqtService } from "@app/common/rmqt/rmqt.service";
+import { RmqService } from "@app/common/rmq/rmq.service";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { ConfigService } from "@nestjs/config";
 
-interface IRmqtModuleOptions {
+interface IRmqModuleOptions {
   name: string;
 }
 
 @Module({
-  providers: [RmqtService],
-  exports: [RmqtService]
+  providers: [RmqService],
+  exports: [RmqService]
 })
-export class RmqtModule {
+export class RmqModule {
 
-  static register({ name }: IRmqtModuleOptions): DynamicModule {
+  static register({ name }: IRmqModuleOptions): DynamicModule {
     return {
-      module: RmqtModule,
+      module: RmqModule,
       imports: [
         ClientsModule.registerAsync([{
           name,
           useFactory: (config: ConfigService) => ({
             transport: Transport.RMQ,
             options: {
-              urls: ["amqp://guest:guest@localhost:5672"],
-              queue: `RABBIT_MQ_${name}_QUEUE`,
-              queueOptions: {
-                durable: true
-              },
+              urls: [config.get<string>('RABBIT_MQ_URL')],
+              queue: `RABBIT_MQ_${name}_QUEUE`, 
             }
-          })
+          }),
+          inject: [ConfigService]
         }])
       ], exports: [ClientsModule]
     };
