@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Product } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { MoveProductDto } from './dto/move-product.dto';
-import { RemoveProductDto } from './dto/remove-product.dto';
+import { Injectable } from "@nestjs/common";
+import { Product } from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { MoveProductDto } from "./dto/move-product.dto";
+import { RemoveProductDto } from "./dto/remove-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
+import { StatusOrder } from "../schema/graphql";
 
 @Injectable()
 export class ProductService {
@@ -15,30 +16,30 @@ export class ProductService {
 
   }
 
-  async productsWishList(uidWishList: string): Promise<Product[]> {
-    return await this.prismaService.product.findMany(
+  async productsWishList(idWishList: string): Promise<Product[]> {
+    return this.prismaService.product.findMany(
       {
         where: {
-          uidWishList
+          idWishList
         }
       }
-    )
+    );
   }
 
   async addToList(moveProduct: MoveProductDto) {
-    const {uid, uidReceiver, uidWishList} = moveProduct
+    const { id, idSender, idWishList } = moveProduct;
 
-    return await this.prismaService.product.update({
+    return this.prismaService.product.update({
       where: {
-        uid
+        id
       },
       data: {
-        uidWishList
+        idWishList
       },
       include: {
         wishList: true
       }
-    })
+    });
   }
 
 
@@ -61,48 +62,67 @@ export class ProductService {
   // }
 
   async create(product: CreateProductDto): Promise<Product | null> {
-    return await this.prismaService.product.create({
-      // @ts-ignore
-      data: {
-        ...product
+    const { idWishList, ...otherData } = product;
+    const foundWishList = await this.prismaService.wishList.findUnique({
+      where: {
+        id: idWishList
       }
-    })
+    });
+
+    return this.prismaService.product.create({
+      data: {
+        ...otherData,
+        price: 0,
+        status: 'VALIDATION',
+        likes: 0,
+        disLikes: 0,
+        royalties: 0,
+        delivery: 0,
+        img: "",
+        wishList: {
+          connect: {
+            id: foundWishList.id
+          }
+        }
+      }
+    });
   }
 
   async update(updateProduct: UpdateProductDto): Promise<Product> {
-    const { uid } = updateProduct
-    return await this.prismaService.product.update({
-      where: {uid},
-      data: {...updateProduct}
-    })
+    console.log("updateProduct", updateProduct);
+    
+    const { id } = updateProduct;
+    return this.prismaService.product.update({
+      where: { id },
+      data: { ...updateProduct }
+    });
   }
 
-  async remove(uid: string): Promise<Product | null> {
-    return await this.prismaService.product.delete({
+  async remove(id: string): Promise<Product | null> {
+    return this.prismaService.product.delete({
       where: {
-        uid
+        id
       }
-    })
+    });
   }
 
-  async removeByUIDs(uids: string[]){
+  async removeByUIDs(ids: string[]) {
     // @ts-ignore
     await this.prismaService.product.deleteMany({
       where: {
-        uid: {
-          in: uids
+        id: {
+          in: ids
         }
       }
-    })
+    });
   }
-
 
 
   async removeAllByList(removeProduct: RemoveProductDto): Promise<any> {
     return await this.prismaService.product.deleteMany({
       where: {
-        uidWishList: removeProduct.uidWishList
-      },
-    })
+        idWishList: removeProduct.idWishList
+      }
+    });
   }
 }

@@ -1,6 +1,8 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import * as cheerio from "cheerio";  
-import { IParsedData } from "./types"; 
+import * as cheerio from "cheerio";
+import { IParsedData } from "./types";
+import { DownloaderService } from "./DownloaderService";
+
 const puppeteer = require("puppeteer");
 
 @Injectable()
@@ -8,7 +10,8 @@ export class ParserService {
   private readonly logger = new Logger(ParserService.name);
   private browser;
 
-  constructor() {}
+  constructor(private readonly downloader: DownloaderService) {
+  }
 
   async createBrowser() {
     if (!this.browser)
@@ -29,33 +32,34 @@ export class ParserService {
       await page.goto(url, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(500);
 
-      const titleDom = await page.waitForSelector("div[data-widget=webProductHeading]");
-      // let title = await page.$eval('div[data-widget=webProductHeading]', div => div.textContent)
-
+      const titleDom = await page.waitForSelector("div[data-widget=webMobProductHeading] h1");
       const priceDom = await page.waitForSelector("div[data-widget=\"webPrice\"]");
-
-      const imgDom = await page.waitForSelector("div[data-widget=\"webGallery\"] img");
-      // let img = await page.$eval('div[data-widget="webGallery"] img', img => img.src)
+      const imgDom = await page.waitForSelector("div[data-widget=\"webMobGallery\"] img");
 
       const content = await page.content();
-      await page.close()
+      await page.close();
       const $ = cheerio.load(content);
 
-      const title = $("div[data-widget=webProductHeading]:first").text();
-      const price$ = $("div[data-widget=\"webPrice\"] span")["1"];
-      let price = $(price$).text().replace(/\s/g, "");
+      const title = $("div[data-widget=webMobProductHeading] h1").text().trim();
+      const price$ = $("div[data-widget=\"webPrice\"] span:first").text();
+      let price = price$.replace(/\s/g, "");
       price = price && /(\d+)/.exec(price)[0];
-      const img = $("div[data-widget=\"webGallery\"] img").attr("src");
+      const img = $("div[data-widget=\"webMobGallery\"] img").attr("src");
 
-      return { price: price && Number(price), name: title, img: img }
+      if (img) {
+        const pathImage = await this.downloader.getByUrlImage(img).then(path => path).catch(e => "");
+        return { price: price && Number(price), name: title, img: pathImage || img };
+      }
+
+      return { price: price && Number(price), name: title, img };
     } catch (e) {
-      this.logger.error(e)
+      this.logger.error(e);
       this.browser?.close();
       this.browser = null;
     }
   }
 
-  async parseWBPage(url: string) {
+  async parseWBPage(url: string): Promise<IParsedData> {
     try {
       await this.createBrowser();
 
@@ -68,24 +72,29 @@ export class ParserService {
       await page.goto(url, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(500);
 
-      const titleDom = await page.waitForSelector("div.product-page__header h1");      
+      const titleDom = await page.waitForSelector("div.product-page__header h1");
       const priceDom = await page.waitForSelector("span.price-block__price");
       const imgDom = await page.waitForSelector(".slide__content.img-plug img");
 
-      const content = await page.content(); 
-      await page.close()
+      const content = await page.content();
+      await page.close();
       const $ = cheerio.load(content);
 
-      const title = $("div.product-page__header h1:first").text(); 
+      const title = $("div.product-page__header h1:first").text();
       const price$ = $("span.price-block__price:first");
       let price = $(price$).text().replace(/\s/g, "");
       price = price && /(\d+)/.exec(price)[0];
 
-      const img = "https:" + $(".slide__content.img-plug img:first").attr("src");
+      const img = $(".slide__content.img-plug img:first").attr("src");
 
-      return { price: price && Number(price), name: title, img: img }
+      if (img) {
+        const pathImage = await this.downloader.getByUrlImage(img).then(path => path).catch(e => "");
+        return { price: price && Number(price), name: title, img: pathImage || img };
+      }
+
+      return { price: price && Number(price), name: title, img };
     } catch (e) {
-      this.logger.error(e)
+      this.logger.error(e);
       this.browser?.close();
       this.browser = null;
     }

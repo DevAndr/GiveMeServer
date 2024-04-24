@@ -9,6 +9,7 @@ import { JwtService } from "@nestjs/jwt";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import axios from "axios";
 import { TwitchResponse } from "./dto/auth.twitch.dto";
+import { LogInResp } from "./types/log-in.type";
 
 @Injectable()
 export class AuthService {
@@ -36,12 +37,12 @@ export class AuthService {
       throw e;
     });
 
-    const tokens = await this.genTokens(newUser.uid, newUser.email);
-    await this.updateRtHash(newUser.uid, tokens.refresh_token);
+    const tokens = await this.genTokens(newUser.id, newUser.email);
+    await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
 
-  async signInLocal(authDto: AuthDto): Promise<Tokens> {
+  async signInLocal(authDto: AuthDto): Promise<LogInResp> {
     const user = await this.prismaService.user.findUnique({
       where: {
         email: authDto.email
@@ -53,15 +54,15 @@ export class AuthService {
     const passwordMatches = await argon.verify(user.hash, authDto.password);
     if (!passwordMatches) throw new ForbiddenException("Access Denied");
 
-    const tokens = await this.genTokens(user.uid, user.email);
-    await this.updateRtHash(user.uid, tokens.refresh_token);
-    return tokens;
+    const tokens = await this.genTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return {tokens, uid: user.id};
   }
 
-  async logOutLocal(uid: string): Promise<boolean> {
+  async logOutLocal(id: string): Promise<boolean> {
     await this.prismaService.user.updateMany({
       where: {
-        uid,
+        id,
         hasheRt: {
           not: null
         }
@@ -73,11 +74,11 @@ export class AuthService {
     return true;
   }
 
-  async refreshToken(uid: string, rt: string): Promise<Tokens> {
+  async refreshToken(id: string, rt: string): Promise<Tokens> {
 
     const user = await this.prismaService.user.findUnique({
       where: {
-        uid
+        id
       }
     });
 
@@ -86,14 +87,14 @@ export class AuthService {
     const rtMatches = await argon.verify(user.hasheRt, rt);
     if (!rtMatches) throw new ForbiddenException("Access Denied");
 
-    const tokens = await this.genTokens(user.uid, user.email);
-    await this.updateRtHash(user.uid, tokens.refresh_token);
+    const tokens = await this.genTokens(user.id, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
 
-  async genTokens(uid: string, email: string): Promise<Tokens> {
+  async genTokens(id: string, email: string): Promise<Tokens> {
     const jwtPayload: JwtPayload = {
-      sub: uid,
+      sub: id,
       email: email
     };
 
@@ -108,11 +109,11 @@ export class AuthService {
     };
   }
 
-  async updateRtHash(uid: string, rt: string) {
+  async updateRtHash(id: string, rt: string) {
     const hash = await argon.hash(rt);
     await this.prismaService.user.update({
       where: {
-        uid
+        id
       },
       data: {
         hasheRt: hash

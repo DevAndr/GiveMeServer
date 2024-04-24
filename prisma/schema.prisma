@@ -8,9 +8,8 @@ datasource db {
 }
 
 model User {
-  id          Int        @default(autoincrement())
+  id          String     @unique @default(uuid())
   email       String     @unique
-  uid         String     @unique @default(uuid())
   name        String?
   role        Role       @default(USER)
   createAt    DateTime   @default(now())
@@ -22,72 +21,76 @@ model User {
   avatar      Bytes?
   links       String[]
 
-  @@id([uid, id])
-  @@unique([uid, id])
   @@map("users")
 }
 
 model WishList {
-  uid         String    @id @unique @default(uuid())
+  id          String    @id @unique @default(uuid())
   name        String
   description String?
   access      Access    @default(PUBLIC)
-  uidUser     String
-  user        User      @relation(fields: [uidUser], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  idUser      String
+  user        User      @relation(fields: [idUser], references: [id], onDelete: Cascade, onUpdate: Cascade)
   products    Product[]
 
-  @@unique([uidUser, uid], map: "index_uidUser_uid")
+  @@unique([idUser, id], map: "index_idUser_id")
   @@map("wish-list")
 }
 
 model Product {
-  name                String
-  description         String?
-  price               Int
-  royalties           Int
-  delivery            Int
-  likes               Int             @default(0)
-  disLikes            Int             @default(0)
-  marketPlace         TypeMarketPlace
-  link                String
-  img                 String
-  status              StatusOrder     @default(VALIDATION)
-  uidWishList         String?
-  uid                 String          @id @unique @default(uuid())
-  labels              String[]
-  uidReceiver         String?
-  descriptionReceiver String?
-  wishList            WishList?       @relation(fields: [uidWishList], references: [uid], onDelete: Cascade, onUpdate: Cascade)
-  Order               Order[]
+  name             String
+  description      String?
+  price            Int
+  royalties        Int
+  delivery         Int
+  likes            Int             @default(0)
+  disLikes         Int             @default(0)
+  marketPlace      TypeMarketPlace
+  link             String
+  img              String
+  status           StatusProduct   @default(VALIDATION)
+  id               String          @id @unique @default(uuid())
+  labels           String[]
+  sender           Sender?         @relation(fields: [senderId], references: [id])
+  descriptionGiver String?
+  idWishList       String
+  wishList         WishList        @relation(fields: [idWishList], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Order            Order[]
+  senderId         String?
 
   @@map("products")
 }
 
 model Order {
-  uid         String      @id @unique @default(uuid())
-  name        String
-  description String?
-  price       Int
-  status      StatusOrder
-  products    Product[]
+  id            String       @id @unique @default(uuid())
+  createAt      DateTime     @default(now())
+  updateAt      DateTime     @updatedAt
+  name          String
+  description   String?
+  price         Int
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  status        StatusOrder
+  products      Product[]
+  transactionId String?
 
   @@map("orders")
 }
 
 model Sender {
-  uid          String         @id @unique @default(uuid())
+  id           String        @id @unique @default(uuid())
   firstName    String
   lastName     String
   email        String
   nickname     String?
   wishes       String?
-  Transactions Transactions[]
+  transactions Transaction[]
+  product      Product[]
 
   @@map("senders")
 }
 
 model Alert {
-  uid         String  @id @unique @default(uuid())
+  id          String  @id @unique @default(uuid())
   title       String
   description String?
 
@@ -95,24 +98,25 @@ model Alert {
 }
 
 model Rates {
-  id                Int     @id @default(autoincrement())
-  feePecentDelevery Decimal
-  feePecentPrice    Decimal
+  id              Int   @id @default(autoincrement())
+  feePercentPrice Float @default(0.1)
 
   @@map("rates")
 }
 
-model Transactions {
-  uid         String            @unique @default(uuid())
-  created     DateTime          @default(now())
+model Transaction {
+  id          String            @unique @default(uuid())
+  createAt    DateTime          @default(now())
+  updateAt    DateTime          @updatedAt
   senderId    String
-  sender      Sender            @relation(fields: [senderId], references: [uid], onDelete: Cascade, onUpdate: Cascade)
+  sender      Sender            @relation(fields: [senderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   amount      Int
   typePayment TypePayment
   status      StatusTransaction
+  Order       Order[]
 
-  @@id([uid])
-  @@map("transactions")
+  @@id([id])
+  @@map("transaction")
 }
 
 enum StatusTransaction {
@@ -148,13 +152,16 @@ enum TypeMarketPlace {
 }
 
 enum StatusOrder {
-  VALIDATION
+  OPEN
   ACTIVE
-  DELIVERY
-  DELIVERED
-  CANCELLED
   PROCESSING
   COMPLETED
   PENDING
   PAYED
+}
+
+enum StatusProduct {
+  VALIDATION
+  ACTIVE
+  COMPLETED
 }

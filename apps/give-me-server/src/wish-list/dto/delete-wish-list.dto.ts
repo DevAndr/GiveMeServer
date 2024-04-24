@@ -1,4 +1,4 @@
 export class DeleteWishListDto {
-  uid: string
-  uidUser: string
+  id: string;
+  idUser: string;
 }

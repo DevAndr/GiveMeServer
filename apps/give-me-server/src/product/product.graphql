@@ -1,51 +1,57 @@
-enum MarketType {
-    OZON
-    WB
+ enum MarketType {
+     OZON
+     WB
+ }
+
+ enum StatusProduct {
+  VALIDATION
+  ACTIVE
+  COMPLETED
 }
 
-type Product {
-    name: String
-    description: String
-    price: Float
-    royalties: Float
-    delivery: Float
-    marketPlace: String
-    link: String
-    img: String
-    status: String
-    uidWishList: String
-    uid: String
-    labels: [String]
-    uidReceiver: String
-    descriptionReceiver: String
-    wishList: WishList
-    likes: Int
-    disLikes: Int
-}
+ type Product {
+     name: String
+     description: String
+     price: Float
+     royalties: Float
+     delivery: Float
+     marketPlace: String
+     link: String
+     img: String
+     status: StatusProduct
+     idWishList: String
+     id: String
+     labels: [String]
+     idSender: String
+     descriptionReceiver: String
+     wishList: WishList
+     likes: Int
+     disLikes: Int
+ }
 
-input InputAddProductToList {
-    uidWishList: String
-    name: String
-    link: String
-    description: String
-    marketPlace: MarketType
-    labels: [String]
-}
+ input InputAddProductToList {
+     idWishList: String
+     name: String
+     link: String
+     description: String
+     marketPlace: MarketType
+     labels: [String]
+ }
 
-input InputUpdateEditorProduct {
-    name: String
-    description: String
-    uid: String
-    uidWishList: String
-    labels: [String]
-}
+ input InputUpdateEditorProduct {
+     name: String
+     description: String
+     id: String
+     idWishList: String
+     labels: [String]
+ }
 
-type Query {
-    productsWishList(uidWishList: String!): [Product]
-}
+ type Query {
+     productsWishList(idWishList: String!): [Product]
+ }
 
-type Mutation {
-    addToList(data: InputAddProductToList): Product
-    updateProduct(data: InputUpdateEditorProduct): Product
-    removeProducts(products: [String]!): [Product]
-}
+ type Mutation {
+     addToList(data: InputAddProductToList): Product
+     updateProduct(data: InputUpdateEditorProduct): Product
+     removeProducts(products: [String]!): [Product]
+ }

@@ -10,10 +10,10 @@ export class WishListService {
   constructor(private readonly prismaService: PrismaService) {
   }
 
-  async getAll(uidUser: string): Promise<any> {
+  async getAll(idUser: string): Promise<any> {
     return await this.prismaService.wishList.findMany({
       where: {
-        uidUser
+        idUser
       },
       include: {
         user: true,
@@ -22,10 +22,10 @@ export class WishListService {
     });
   }
 
-  async getListById(uid: string): Promise<WishList | null> {
+  async getListById(id: string): Promise<WishList | null> {
     return await this.prismaService.wishList.findUnique({
       where: {
-        uid
+        id
       },
       include: {
         products: true
@@ -33,7 +33,7 @@ export class WishListService {
     });
   }
 
-  async getListByIdForUser(where: Prisma.WishListUidUserUidCompoundUniqueInput): Promise<WishList | null> {
+  async getListByIdForUser(where: Prisma.WishListIdUserIdCompoundUniqueInput): Promise<WishList | null> {
     return await this.prismaService.wishList.findFirst({
       where,
       include: {
@@ -51,12 +51,12 @@ export class WishListService {
   }
 
   async updateList(updateWishListDto: UpdateWishListDto): Promise<any> {
-    const { uid, uidUser } = updateWishListDto;
-    console.log(uidUser, updateWishListDto);
+    const { id, idUser } = updateWishListDto;
+    console.log(idUser, updateWishListDto);
 
     return await this.prismaService.wishList.update({
       where: {
-        uid
+        id
       },
       data: {
         ...updateWishListDto
@@ -65,11 +65,11 @@ export class WishListService {
   }
 
   async removeById(deleteWishListDto: DeleteWishListDto): Promise<any> {
-    const { uidUser, uid } = deleteWishListDto;
-    console.log(uidUser);
+    const { idUser, id } = deleteWishListDto;
+    console.log(idUser);
     return await this.prismaService.wishList.delete({
       where: {
-        uidUser_uid: deleteWishListDto
+        idUser_id: deleteWishListDto
       },
       include: {
         products: true
@@ -77,10 +77,10 @@ export class WishListService {
     });
   }
 
-  async removeAll(uidUser: string): Promise<any> {
+  async removeAll(idUser: string): Promise<any> {
     return await this.prismaService.wishList.deleteMany({
       where: {
-        uidUser
+        idUser
       }
     });
   }

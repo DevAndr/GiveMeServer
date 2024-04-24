@@ -21,7 +21,7 @@ export class ParsedEventService {
     errorBehavior: MessageHandlerErrorBehavior.REQUEUE
   })
   public async rpcHandler(@RabbitPayload() msg, @RabbitRequest() req) {
-    const {parsedData, uidUser} = msg.data
+    const {parsedData, idUser} = msg.data
     if (parsedData.price && parsedData.img && parsedData.name) {
       await this.productService.update(parsedData)
     }

@@ -1,42 +1,41 @@
-scalar Object
+ scalar Object
 
-interface IData {
-    data: Object
-}
+ interface IData {
+     data: Object
+ }
 
-type CheckAuthData {
-    isAuth: Boolean
-}
+ type CheckAuthData {
+     isAuth: Boolean
+ }
 
-type Tokens {
-    access_token: String
-    refresh_token: String
-}
+ type Tokens {
+     access_token: String
+     refresh_token: String
+ }
 
-input InputLogIn {
-    email: String
-    password: String
-}
+ input InputLogIn {
+     email: String
+     password: String
+ }
 
-input InputSignUp {
-    name: String
-    email: String
-    password: String
-}
+ input InputSignUp {
+     name: String
+     email: String
+     password: String
+ }
 
-type Query {
-    checkAuth: CheckAuthData
-}
+ type Query {
+     checkAuth: CheckAuthData
+ }
 
-input InputRefresh {
-#    uid: String
-    refreshToken: String
-}
+ input InputRefresh {
+     refreshToken: String
+ }
 
-type Mutation {
-    logIn(data: InputLogIn): Tokens!
-    signUp(data: InputSignUp): Tokens!
-    refresh: Tokens!
+ type Mutation {
+     logIn(data: InputLogIn): Tokens!
+     signUp(data: InputSignUp): Tokens!
+     refresh: Tokens!
 
-    twitch(code: String!): Tokens!
-}
+     twitch(code: String!): Tokens!
+ }

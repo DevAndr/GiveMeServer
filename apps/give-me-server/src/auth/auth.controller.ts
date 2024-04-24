@@ -37,22 +37,23 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async signInLocal(@Body() authDto: AuthDto): Promise<Tokens> {
     console.log("signInLocal", authDto);
-    return this.authService.signInLocal(authDto);
+    const {tokens} = await this.authService.signInLocal(authDto);
+    return tokens
   }
 
 
   @Post("logOut")
   @HttpCode(HttpStatus.OK)
-  async logOutLocal(@GetCurrentUserId() uid: string): Promise<boolean> {
-    return this.authService.logOutLocal(uid);
+  async logOutLocal(@GetCurrentUserId() id: string): Promise<boolean> {
+    return this.authService.logOutLocal(id);
   }
 
   @Post("refresh")
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@GetCurrentUserId() uid: string, @GetCurrentUser("refreshToken") refreshToken: string): Promise<Tokens> {
-    return this.authService.refreshToken(uid, refreshToken);
+  async refreshToken(@GetCurrentUserId() id: string, @GetCurrentUser("refreshToken") refreshToken: string): Promise<Tokens> {
+    return this.authService.refreshToken(id, refreshToken);
   }
 
   @Get("twitch")

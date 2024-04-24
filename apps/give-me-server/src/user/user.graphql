@@ -2,7 +2,7 @@ scalar DateTime
 scalar Role
 
 type User {
-  uid: String!
+  id: String!
   name: String
   email: String
   role: Role
@@ -17,20 +17,20 @@ input UpdateUserInput {
 }
 
 input FindUserInput {
-  uid: String
+  id: String
 }
 
 input getUser {
-  uid: String
+  id: String
 }
 
 type Query {
-  user(uid: String!): User
+  user(id: String!): User
   users: [User]
   currentUser: User
 }
 
 type Mutation {
-  updateUser(uid: String!, params: UpdateUserInput!): User!
+  updateUser(id: String!, params: UpdateUserInput!): User!
   findUser( findUserInput: FindUserInput!): User
 }

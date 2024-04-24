@@ -1,5 +1,5 @@
 export class MoveProductDto {
-  uid: string
-  uidWishList: string
-  uidReceiver: string
+  id: string
+  idWishList: string
+  idSender: string
 }

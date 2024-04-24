@@ -12,8 +12,8 @@ export class WishListController {
   @Post('all')
   // @Public()
   @UseGuards(GqlAuthGuard)
-  getAll(@Body('uidUser') uidUser: string) {
-    return this.wshListService.getAll(uidUser)
+  getAll(@Body('idUser') idUser: string) {
+    return this.wshListService.getAll(idUser)
   }
 
   @Get(':uid')
@@ -29,8 +29,8 @@ export class WishListController {
   }
 
   @Post('remove-all')
-  removeAll(@Body('uidUser') uidUser: string) {
-    return this.wshListService.removeAll(uidUser)
+  removeAll(@Body('idUser') idUser: string) {
+    return this.wshListService.removeAll(idUser)
   }
 
   @Post('create')

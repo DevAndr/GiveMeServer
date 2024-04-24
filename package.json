@@ -20,7 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/give-me-server/test/jest-e2e.json",
     "prisma:studio": "npx prisma studio",
-    "gen-types-graphql": "ts-node ./apps/give-me-server/src/generate-typings.ts",
+    "gen-types-graphql": "ts-node apps/give-me-server/src/generate-typings.ts",
     "prisma:gen": "prisma generate --watch",
     "dev": "concurrently \"yarn:start:dev\" \"nest start --watch parser\" \"yarn:gen-types-graphql\" \"yarn:prisma:gen\"",
     "parser": "concurrently \"nest start --watch parser\""
@@ -50,7 +50,7 @@
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
     "argon2": "^0.31.2",
-    "axios": "^1.6.6",
+    "axios": "^1.6.8",
     "bull": "^4.12.2",
     "bullmq": "^5.1.5",
     "cheerio": "^1.0.0-rc.12",

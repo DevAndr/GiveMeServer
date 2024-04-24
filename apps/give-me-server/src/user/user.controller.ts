@@ -14,22 +14,22 @@ export class UserController {
   @Post('find')
   @Public()
   @HttpCode(HttpStatus.OK)
-  getUser(@Body('uidUser') uidUser: string): Promise<PublicDataUserDto> {
-    return this.userService.findUser({ uid: uidUser });
+  getUser(@Body('idUser') idUser: string): Promise<PublicDataUserDto> {
+    return this.userService.findUser({ id: idUser });
   }
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  getCurrentUser(@GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
-    console.log(uid);
-    return this.userService.findUser({ uid: uid });
+  getCurrentUser(@GetCurrentUserId() id: string): Promise<PublicDataUserDto> {
+    console.log(id);
+    return this.userService.findUser({ id });
   }
 
   @Post("update")
   @HttpCode(HttpStatus.OK)
-  updateUserData(@Body() updateDataUserDto: UpdateDataUserDto, @GetCurrentUserId() uid: string): Promise<PublicDataUserDto> {
+  updateUserData(@Body() updateDataUserDto: UpdateDataUserDto, @GetCurrentUserId() id: string): Promise<PublicDataUserDto> {
     return  this.userService.updateUser({
-      where: { uid },
+      where: { id },
       data: { ...updateDataUserDto }
     });
   }
