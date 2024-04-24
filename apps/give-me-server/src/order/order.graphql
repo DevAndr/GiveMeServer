@@ -1,0 +1,85 @@
+scalar DateTime
+
+enum StatusOrder {
+  OPEN
+  ACTIVE
+  PROCESSING
+  COMPLETED
+  PENDING
+  PAYED
+}
+
+enum TypePayment {
+  Cart
+  SBP
+}
+
+enum StatusTransaction {
+  DONE
+  FAILED
+  WAITING
+  ERROR
+  CANCELED_BY_SENDER
+  CANCELED_BY_PROVIDER
+  PROCESSING
+}
+
+type Sender {
+  id: String
+  firstName: String
+  lastName: String
+  email: String
+  nickname: String
+  wishes: String
+}
+
+type Transaction {
+  id: String
+  createAt: DateTime
+  updateAt: DateTime
+  senderId: String
+  sender: Sender
+  amount: Int
+  typePayment: TypePayment
+  status: StatusTransaction
+}
+
+type Order {
+  id: String
+  name: String
+  description: String
+  price: Int
+  status: StatusOrder
+  transaction: Transaction
+  products: [Product]
+}
+
+input CreateOrderInput {
+  name: String!
+  description: String
+  productIds: [String]
+}
+
+input UpdateInput {
+  id: String
+  name: String
+  description: String
+  productIds: [String]
+}
+
+input PayInput {
+  orderId: String
+  senderId: String
+  typePayment: TypePayment
+}
+
+type Query {
+  getOrder(id: String!): Order
+}
+
+type Mutation {
+  createOrder(data: CreateOrderInput!): Order
+  confirmOrder(id: String!): Order
+  pathOrder(data: UpdateInput!): Order
+  payOrder(data: PayInput): Order
+}
