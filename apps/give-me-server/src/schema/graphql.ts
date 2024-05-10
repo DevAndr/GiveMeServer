@@ -65,6 +65,7 @@ export class InputRefresh {
 
 export class CreateOrderInput {
     name: string;
+    senderId?: Nullable<string>;
     description?: Nullable<string>;
     productIds?: Nullable<Nullable<string>[]>;
 }
@@ -78,7 +79,6 @@ export class UpdateInput {
 
 export class PayInput {
     orderId?: Nullable<string>;
-    senderId?: Nullable<string>;
     typePayment?: Nullable<TypePayment>;
 }
 
@@ -151,6 +151,8 @@ export abstract class IQuery {
 
     abstract productsWishList(idWishList: string): Nullable<Nullable<Product>[]> | Promise<Nullable<Nullable<Product>[]>>;
 
+    abstract getOrCreateSender(): Nullable<Sender> | Promise<Nullable<Sender>>;
+
     abstract user(id: string): Nullable<User> | Promise<Nullable<User>>;
 
     abstract users(): Nullable<Nullable<User>[]> | Promise<Nullable<Nullable<User>[]>>;
@@ -196,15 +198,6 @@ export abstract class IMutation {
     abstract removeList(id?: Nullable<string>): Nullable<WishList> | Promise<Nullable<WishList>>;
 }
 
-export class Sender {
-    id?: Nullable<string>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
-    email?: Nullable<string>;
-    nickname?: Nullable<string>;
-    wishes?: Nullable<string>;
-}
-
 export class Transaction {
     id?: Nullable<string>;
     createAt?: Nullable<DateTime>;
@@ -244,6 +237,15 @@ export class Product {
     wishList?: Nullable<WishList>;
     likes?: Nullable<number>;
     disLikes?: Nullable<number>;
+}
+
+export class Sender {
+    id?: Nullable<string>;
+    firstName?: Nullable<string>;
+    lastName?: Nullable<string>;
+    email?: Nullable<string>;
+    nickname?: Nullable<string>;
+    wishes?: Nullable<string>;
 }
 
 export class User {

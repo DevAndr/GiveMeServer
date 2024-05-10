@@ -22,6 +22,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
 import { NOTIFICATION_SERVICE, PARSER_SERVICE } from "libs/common/constants";
 import { OrderResolver } from './order/order.resolver';
 import { OrderModule } from './order/order.module';
+import { SenderModule } from './sender/sender.module';
 
 export interface GqlContext {
   req: Request;
@@ -83,7 +84,8 @@ export interface GqlContext {
     RmqModule.register({
     	name: PARSER_SERVICE
     }),
-    OrderModule
+    OrderModule,
+    SenderModule
   ],
   providers: [
     {
