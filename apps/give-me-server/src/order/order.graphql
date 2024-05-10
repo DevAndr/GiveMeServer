@@ -10,8 +10,8 @@ enum StatusOrder {
 }
 
 enum TypePayment {
-  Cart
-  SBP
+  CARD
+  ONLINE
 }
 
 enum StatusTransaction {
@@ -22,15 +22,6 @@ enum StatusTransaction {
   CANCELED_BY_SENDER
   CANCELED_BY_PROVIDER
   PROCESSING
-}
-
-type Sender {
-  id: String
-  firstName: String
-  lastName: String
-  email: String
-  nickname: String
-  wishes: String
 }
 
 type Transaction {
@@ -56,6 +47,7 @@ type Order {
 
 input CreateOrderInput {
   name: String!
+  senderId: String
   description: String
   productIds: [String]
 }
@@ -69,12 +61,12 @@ input UpdateInput {
 
 input PayInput {
   orderId: String
-  senderId: String
   typePayment: TypePayment
 }
 
 type Query {
   getOrder(id: String!): Order
+  paymentTypes: [TypePayment]
 }
 
 type Mutation {

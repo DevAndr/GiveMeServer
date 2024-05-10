@@ -6,7 +6,7 @@ import { Public } from "../common/decorators";
 @Resolver()
 export class OrderResolver {
   constructor(private readonly orderService: OrderService) {}
-  
+
   @Public()
   @Query("getOrder")
   getOrder(@Args("id") id: string) {
@@ -23,4 +23,11 @@ export class OrderResolver {
   pathOrder(@Args("data") data: UpdateInput) {
     return this.orderService.pathOrder(data);
   }
+
+  @Public()
+  @Mutation("payOrder")
+  payOrder(@Args("id") id: string) {
+    // return this.orderService.payOrder(id);
+  }
+
 }

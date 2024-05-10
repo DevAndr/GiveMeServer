@@ -78,11 +78,8 @@ model Order {
 
 model Sender {
   id           String        @id @unique @default(uuid())
-  firstName    String
-  lastName     String
-  email        String
-  nickname     String?
-  wishes       String?
+  email        String?
+  nickname     String? 
   transactions Transaction[]
   product      Product[]
 
@@ -130,8 +127,8 @@ enum StatusTransaction {
 }
 
 enum TypePayment {
-  Cart
-  SBP
+  CARD
+  ONLINE
 }
 
 enum Access {
