@@ -1,42 +1,58 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { CreateWishListDto } from './dto/create-wish-list.dto';
-import { WishListService } from './wish-list.service';
-import { Public } from '../common/decorators';
-import { DeleteWishListDto } from './dto/delete-wish-list.dto';
-import { GqlAuthGuard, RtGuard } from '../common/decorators/guards';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { GetCurrentUser, Public } from '../common/decorators'
+import { GqlAuthGuard } from '../common/decorators/guards'
+import { CreateWishListDto } from './dto/create-wish-list.dto'
+import { DeleteWishListDto } from './dto/delete-wish-list.dto'
+import { WishListService } from './wish-list.service'
 
 @Controller('wish-list')
 export class WishListController {
-  constructor(private readonly wshListService: WishListService) {}
+	constructor(private readonly wshListService: WishListService) {}
 
-  @Post('all')
-  // @Public()
-  @UseGuards(GqlAuthGuard)
-  getAll(@Body('uidUser') uidUser: string) {
-    return this.wshListService.getAll(uidUser)
-  }
+	@Post('all')
+	// @Public()
+	@UseGuards(GqlAuthGuard)
+	getAll(@Body('userId') userId: string) {
+		return this.wshListService.getAll(userId)
+	}
 
-  @Get(':uid')
-  @Public()
-  get(@Param('uid') uid: string) {
-    return this.wshListService.getListById(uid)
-  }
+	@Get(':id')
+	@Public()
+	get(@Param('id') id: string) {
+		return this.wshListService.getListById(id)
+	}
 
-  @Post('remove')
-  @Public()
-  remove(@Body() deleteWishListDto: DeleteWishListDto) {
-    return this.wshListService.removeById(deleteWishListDto)
-  }
+	@Get('wishListsCurrentUser')
+	getWishListsCurrentUser(@GetCurrentUser() id: string) {
+		return this.wshListService.getAll(id)
+	}
 
-  @Post('remove-all')
-  removeAll(@Body('uidUser') uidUser: string) {
-    return this.wshListService.removeAll(uidUser)
-  }
+	@Post('wishListByIdForUser')
+	@Public()
+	getWishListByIdForUser(
+		@Body('userId') userId: string,
+		@Body('listId') listId: string
+	) {
+		console.log(userId, listId)
+		return this.wshListService.getListByIdForUser({
+			uidUser: userId,
+			uid: listId,
+		})
+	}
 
-  @Post('create')
-  @Public()
-  create(@Body() createWishListDto: CreateWishListDto){
-    return this.wshListService.addList(createWishListDto)
-  }
+	@Post('remove')
+	remove(@Body() deleteWishListDto: DeleteWishListDto) {
+		return this.wshListService.removeById(deleteWishListDto)
+	}
 
+	@Post('remove-all')
+	removeAll(@Body('userId') userId: string) {
+		return this.wshListService.removeAll(userId)
+	}
+
+	@Post('create')
+	@Public()
+	create(@Body() createWishListDto: CreateWishListDto) {
+		return this.wshListService.addList(createWishListDto)
+	}
 }
