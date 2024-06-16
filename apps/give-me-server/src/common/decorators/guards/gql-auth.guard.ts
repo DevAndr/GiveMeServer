@@ -4,18 +4,19 @@ import {GqlExecutionContext} from '@nestjs/graphql';
 import {Reflector} from '@nestjs/core';
 import {Observable} from 'rxjs';
 import {JwtService} from "@nestjs/jwt";
-import Utils from "../../utils";
+import Utils from "../../utils";  
 
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('jwt') {
-    constructor(private reflector: Reflector) {
+    constructor(private reflector: Reflector ) {
         super();
     }
 
     getRequest(ctx: ExecutionContext): any {
         if (ctx.getType() === 'http') {
             const request = ctx.switchToHttp().getRequest();
-            console.log("http");
+            // console.log("http", request.cookies);
+            
 
             return request;
         } else {

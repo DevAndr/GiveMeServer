@@ -18,8 +18,8 @@ export enum StatusOrder {
 }
 
 export enum TypePayment {
-    Cart = "Cart",
-    SBP = "SBP"
+    CARD = "CARD",
+    ONLINE = "ONLINE"
 }
 
 export enum StatusTransaction {
@@ -149,9 +149,13 @@ export abstract class IQuery {
 
     abstract getOrder(id: string): Nullable<Order> | Promise<Nullable<Order>>;
 
+    abstract paymentTypes(): Nullable<Nullable<TypePayment>[]> | Promise<Nullable<Nullable<TypePayment>[]>>;
+
     abstract productsWishList(idWishList: string): Nullable<Nullable<Product>[]> | Promise<Nullable<Nullable<Product>[]>>;
 
     abstract getOrCreateSender(): Nullable<Sender> | Promise<Nullable<Sender>>;
+
+    abstract getSenderById(id: string): Nullable<Sender> | Promise<Nullable<Sender>>;
 
     abstract user(id: string): Nullable<User> | Promise<Nullable<User>>;
 
@@ -241,11 +245,8 @@ export class Product {
 
 export class Sender {
     id?: Nullable<string>;
-    firstName?: Nullable<string>;
-    lastName?: Nullable<string>;
     email?: Nullable<string>;
     nickname?: Nullable<string>;
-    wishes?: Nullable<string>;
 }
 
 export class User {

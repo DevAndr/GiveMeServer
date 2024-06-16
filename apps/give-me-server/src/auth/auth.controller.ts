@@ -5,42 +5,45 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Redirect,
-  Req,
-  Request,
   Res,
-  UseGuards
+  UseGuards,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, SignUpDto } from "./dto/auth.dto";
 import { Tokens } from "./types";
 import { RtGuard } from "../common/decorators/guards";
-import { GetCurrentUser, GetCurrentUserId, Public } from "../common/decorators";
+import { Cookies, GetCurrentUserId, Public } from "../common/decorators";
 import { UserService } from "../user/user.service";
-import axios from "axios";
+import { Req } from "@nestjs/common";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly userService: UserService,
-              private readonly authService: AuthService) {
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService
+  ) {}
+
+  @Post("signIn")
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  async signInLocal(@Req() req, @Body() authDto: AuthDto): Promise<Tokens> {
+    console.log("signInLocal", authDto);
+    console.log();
+
+    const { tokens } = await this.authService.signInLocal(authDto);
+    this.setTokensCookie(req, tokens);
+    return tokens;
   }
 
   @Post("signUp")
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Body() authDto: SignUpDto): Promise<Tokens> {
-    return this.authService.signUpLocal(authDto);
-  }
-
-  @Post("signIn")
-  @Public()
-  @HttpCode(HttpStatus.OK)
-  async signInLocal(@Body() authDto: AuthDto): Promise<Tokens> {
-    console.log("signInLocal", authDto);
-    const {tokens} = await this.authService.signInLocal(authDto);
+  async signUpLocal(@Req() req, @Body() authDto: SignUpDto): Promise<Tokens> {
+    const tokens = await this.authService.signUpLocal(authDto);
+    console.log("tokens", tokens);
+    this.setTokensCookie(req, tokens)
     return tokens
   }
-
 
   @Post("logOut")
   @HttpCode(HttpStatus.OK)
@@ -52,16 +55,22 @@ export class AuthController {
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@GetCurrentUserId() id: string, @GetCurrentUser("refreshToken") refreshToken: string): Promise<Tokens> {
-    return this.authService.refreshToken(id, refreshToken);
+  async refreshToken(
+    @Req() req,
+    @GetCurrentUserId() id: string,
+    @Cookies("refresh_token") refreshToken: string
+  ): Promise<Tokens> {
+    const tokens = await this.authService.refreshToken(id, refreshToken);
+    console.log('refreshToken', id, refreshToken, tokens);    
+    this.setTokensCookie(req, tokens);
+    return tokens;
   }
 
   @Get("twitch")
   @Public()
   @HttpCode(HttpStatus.OK)
   async authTwitch(@Req() req) {
-
-    await this.authService.getTokensTwitch('');
+    await this.authService.getTokensTwitch("");
   }
 
   @Get("twitch/oauth")
@@ -77,6 +86,20 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async check(@Res() resp, @Req() req) {
     console.log(resp, req);
-    resp.status(200).send()
+    resp.status(200).send();
+  }
+
+ setTokensCookie(req: Request, tokens: Tokens) {
+    // @ts-ignore
+    req.res.cookie("access_token", `${tokens.access_token}`, {
+      httpOnly: true,
+      maxAge: 50000 //1000 * 60 * 60 * 24 * 7,
+    });
+
+    // @ts-ignore
+    req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    });
   }
 }

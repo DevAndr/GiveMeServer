@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CreateWishListDto } from './dto/create-wish-list.dto';
 import { WishListService } from './wish-list.service';
-import { Public } from '../common/decorators';
+import { GetCurrentUserId, Public } from '../common/decorators';
 import { DeleteWishListDto } from './dto/delete-wish-list.dto';
 import { GqlAuthGuard, RtGuard } from '../common/decorators/guards';
 
@@ -16,10 +16,12 @@ export class WishListController {
     return this.wshListService.getAll(idUser)
   }
 
-  @Get(':uid')
+  @Get('list/:id')
   @Public()
-  get(@Param('uid') uid: string) {
-    return this.wshListService.getListById(uid)
+  get(@Param('id') id: string) {
+    console.log("id", id);
+    
+    return this.wshListService.getListById(id)
   }
 
   @Post('remove')
@@ -37,6 +39,13 @@ export class WishListController {
   @Public()
   create(@Body() createWishListDto: CreateWishListDto){
     return this.wshListService.addList(createWishListDto)
+  }
+
+  @Get('lists')
+  getWishLists(@GetCurrentUserId() id: string) {
+    console.log("id", id);
+    
+    return this.wshListService.getAll(id);
   }
 
 }

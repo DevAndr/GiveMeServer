@@ -10,6 +10,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import axios from "axios";
 import { TwitchResponse } from "./dto/auth.twitch.dto";
 import { LogInResp } from "./types/log-in.type";
+import { Request } from "express";
 
 @Injectable()
 export class AuthService {
@@ -158,5 +159,19 @@ export class AuthService {
     }
 
     return null;
+  }
+
+  public   setTokensCookie(req: Request, tokens: Tokens) {
+    // @ts-ignore
+    req.res.cookie("access_token", `${tokens.access_token}`, {
+      httpOnly: false,
+      maxAge: 50000 //1000 * 60 * 60 * 24 * 7,
+    });
+
+    // @ts-ignore
+    req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
+      httpOnly: false,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    });
   }
 }
