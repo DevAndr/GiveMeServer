@@ -2,7 +2,7 @@ import {Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver} from 
 import {JwtService} from "@nestjs/jwt";
 import {AuthDto, SignUpDto} from "./dto/auth.dto";
 import {AuthService} from "./auth.service";
-import {CheckAuthData, Tokens} from "./types";
+import {AuthResp, CheckAuthData, Tokens} from "./types";
 import {GqlContext} from "../app.module";
 import {UseGuards} from "@nestjs/common";
 import {RtGuard} from "../common/decorators/guards";
@@ -22,10 +22,10 @@ export class AuthResolver {
     @Public()
     @Mutation("logIn")
     async logIn(@Args("data") authDto: AuthDto, @Context() context: GqlContext): Promise<Tokens> {
-        const {tokens, uid} = await this.authService.signInLocal(authDto);
+        const {tokens, user} = await this.authService.signInLocal(authDto);
         this.setTokensCookie(context, tokens)
         // @ts-ignore
-        context.req.res.cookie("uid", uid, {
+        context.req.res.cookie("uid", user.id, {
             httpOnly: false, 
         });
 
@@ -34,11 +34,11 @@ export class AuthResolver {
 
     @Public()
     @Mutation("signUp")
-    async signUp(@Args("data") authDto: SignUpDto, @Context() context: GqlContext): Promise<Tokens> {
+    async signUp(@Args("data") authDto: SignUpDto, @Context() context: GqlContext): Promise<AuthResp> {
         const maxAge = new Date().getTime() + 60000;
-        const tokens = await this.authService.signUpLocal(authDto);
+        const {tokens, user} = await this.authService.signUpLocal(authDto);
         this.setTokensCookie(context, tokens)
-        return tokens;
+        return {tokens, user};
     }
 
     @Public()
@@ -53,36 +53,17 @@ export class AuthResolver {
         return tokens;
     }
 
-
-    @Public()
-    // @UseGuards(RtGuard)
-    @Mutation("twitch")
-    async twitch(@Args("code") code: string,
-                 @GetCurrentUserId() id: string,
-                 @GetCurrentUser("refreshToken") refreshToken: string,
-                 @Context() context: GqlContext): Promise<Tokens | null> {
-
-        const tokens = await this.authService.getTokensTwitch(code);
-
-        if (tokens) {
-            this.setTokensCookie(context, tokens)
-
-            return {...tokens} as Tokens;
-        }
-
-        return null;
-    }
-
+ 
 
     setTokensCookie(ctx: GqlContext, tokens: Tokens) {
         // @ts-ignore
-        ctx.req.res.cookie("access_token", `${tokens.access_token}`, {
+        ctx.req.res.cookie("access_token", `${tokens.accessToken}`, {
             httpOnly: false,
             maxAge: 1000 * 60 * 60 * 24 * 7
         });
 
         // @ts-ignore
-        ctx.req.res.cookie("refresh_token", `${tokens.refresh_token}`, {
+        ctx.req.res.cookie("refresh_token", `${tokens.refreshToken}`, {
             httpOnly: false,
             maxAge: 1000 * 60 * 60 * 24 * 30
         });

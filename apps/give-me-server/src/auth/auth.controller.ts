@@ -10,9 +10,9 @@ import {
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, SignUpDto } from "./dto/auth.dto";
-import { Tokens } from "./types";
+import { AuthResp, Tokens } from "./types";
 import { RtGuard } from "../common/decorators/guards";
-import { Cookies, GetCurrentUserId, Public } from "../common/decorators";
+import { Cookies, GetCurrentUser, GetCurrentUserId, Public } from "../common/decorators";
 import { UserService } from "../user/user.service";
 import { Req } from "@nestjs/common";
 
@@ -26,23 +26,20 @@ export class AuthController {
   @Post("signIn")
   @Public()
   @HttpCode(HttpStatus.OK)
-  async signInLocal(@Req() req, @Body() authDto: AuthDto): Promise<Tokens> {
-    console.log("signInLocal", authDto);
-    console.log();
-
-    const { tokens } = await this.authService.signInLocal(authDto);
-    this.setTokensCookie(req, tokens);
-    return tokens;
+  async signInLocal(@Req() req, @Body() authDto: AuthDto): Promise<AuthResp> {
+    const { tokens, user } = await this.authService.signInLocal(authDto);
+    // this.setTokensCookie(req, tokens);
+    return {tokens, user};
   }
 
   @Post("signUp")
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Req() req, @Body() authDto: SignUpDto): Promise<Tokens> {
-    const tokens = await this.authService.signUpLocal(authDto);
+  async signUpLocal(@Req() req, @Body() authDto: SignUpDto): Promise<AuthResp> {
+    const {tokens, user} = await this.authService.signUpLocal(authDto);
     console.log("tokens", tokens);
-    this.setTokensCookie(req, tokens)
-    return tokens
+    // this.setTokensCookie(req, tokens)
+    return {tokens, user}
   }
 
   @Post("logOut")
@@ -58,11 +55,11 @@ export class AuthController {
   async refreshToken(
     @Req() req,
     @GetCurrentUserId() id: string,
-    @Cookies("refresh_token") refreshToken: string
+    @GetCurrentUser("refreshToken") refreshToken: string
   ): Promise<Tokens> {
     const tokens = await this.authService.refreshToken(id, refreshToken);
     console.log('refreshToken', id, refreshToken, tokens);    
-    this.setTokensCookie(req, tokens);
+    // this.setTokensCookie(req, tokens);
     return tokens;
   }
 
