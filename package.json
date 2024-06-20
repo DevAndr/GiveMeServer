@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/apps/give-me-server/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -22,7 +22,7 @@
     "prisma:studio": "npx prisma studio",
     "gen-types-graphql": "ts-node apps/give-me-server/src/generate-typings.ts",
     "prisma:gen": "prisma generate --watch",
-    "dev": "concurrently \"yarn:start:dev\" \"nest start --watch parser\" \"yarn:gen-types-graphql\" \"yarn:prisma:gen\"",
+    "dev": "concurrently \"yarn:start:dev\" \"nest start --watch parser\" \"nest start --watch storage\" \"yarn:gen-types-graphql\" \"yarn:prisma:gen\"",
     "parser": "concurrently \"nest start --watch parser\""
   },
   "dependencies": {
