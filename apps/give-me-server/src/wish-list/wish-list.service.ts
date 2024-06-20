@@ -11,7 +11,7 @@ export class WishListService {
   }
 
   async getAll(idUser: string): Promise<any> {
-    return this.prismaService.wishList.findMany({
+    return await this.prismaService.wishList.findMany({
       where: {
         idUser
       },
@@ -23,7 +23,7 @@ export class WishListService {
   }
 
   async getListById(id: string): Promise<WishList | null> {
-    return this.prismaService.wishList.findUnique({
+    return await this.prismaService.wishList.findUnique({
       where: {
         id
       },
@@ -34,7 +34,7 @@ export class WishListService {
   }
 
   async getListByIdForUser(where: Prisma.WishListIdUserIdCompoundUniqueInput): Promise<WishList | null> {
-    return this.prismaService.wishList.findFirst({
+    return await this.prismaService.wishList.findFirst({
       where,
       include: {
         products: true
@@ -43,7 +43,7 @@ export class WishListService {
   }
 
   async addList(createWishListDto: CreateWishListDto): Promise<WishList | null> {
-    return this.prismaService.wishList.create({
+    return await this.prismaService.wishList.create({
       data: {
         ...createWishListDto
       }
@@ -54,7 +54,7 @@ export class WishListService {
     const { id, idUser } = updateWishListDto;
     console.log(idUser, updateWishListDto);
 
-    return this.prismaService.wishList.update({
+    return await this.prismaService.wishList.update({
       where: {
         id
       },
@@ -67,7 +67,7 @@ export class WishListService {
   async removeById(deleteWishListDto: DeleteWishListDto): Promise<any> {
     const { idUser, id } = deleteWishListDto;
     console.log(idUser);
-    return this.prismaService.wishList.delete({
+    return await this.prismaService.wishList.delete({
       where: {
         idUser_id: deleteWishListDto
       },
@@ -78,7 +78,7 @@ export class WishListService {
   }
 
   async removeAll(idUser: string): Promise<any> {
-    return this.prismaService.wishList.deleteMany({
+    return await this.prismaService.wishList.deleteMany({
       where: {
         idUser
       }
