@@ -10,7 +10,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        RtStrategy.extractJWT,
+        // RtStrategy.extractJWT,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
@@ -20,10 +20,9 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   async validate(req: Request, payload: JwtPayload): Promise<JwtPayloadWithRt> {
-    const cookies = req.cookies;
     console.log('RtStrategy');
-
-    const refreshToken = req.cookies?.refresh_token;
+    const refreshToken = req?.get('authorization')
+      .replace('Bearer', '').trim();
 
     if (!refreshToken) throw new ForbiddenException('Refresh token malformed');
 

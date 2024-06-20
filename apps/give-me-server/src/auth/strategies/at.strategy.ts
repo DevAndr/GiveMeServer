@@ -11,7 +11,7 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        AtStrategy.extractJWT,
+        // AtStrategy.extractJWT,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       secretOrKey: config.get<string>("AT_SECRET"),
