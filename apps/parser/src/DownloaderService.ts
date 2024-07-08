@@ -9,7 +9,7 @@ export class DownloaderService {
   }
 
   checkBasePath() {
-    const pathStorage = this.config.get("PATH_STORE_IMAGES") ||  "H:\\NodeJsApps\\GiveMe\\give-me\\public\\uploads\\images";
+    const pathStorage = `${this.config.get("PATH_STORAGE_IMAGES")}/uploads` ||  "H:\\NodeJsApps\\GiveMe\\give-me\\public\\uploads\\images";
 
     if (!fs.existsSync(pathStorage)) {
       // Если путь не существует, создаем его
@@ -32,8 +32,11 @@ export class DownloaderService {
       const writer = fs.createWriteStream(filepath);
       const response = await axios.get(url, { responseType: "stream" });
       response.data.pipe(writer);
+      
+      const urlFile = this.config.get("HOST_URL_STORAGE_SERVICE") + "/storage/images/" + filename;
+
       return new Promise((resolve, reject) => {
-        writer.on("finish", () => resolve('/uploads/images/' + filename));
+        writer.on("finish", () => resolve(urlFile));
         writer.on("error", reject);
       });
     } catch (e) {
