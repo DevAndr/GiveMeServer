@@ -14,7 +14,7 @@ export class AuthResolver {
     }
 
     @Query("checkAuth")
-    async checkAuth(@Context() context: GqlContext, @Cookies("id") id: String): Promise<CheckAuthData> {
+    async checkAuth(@Context() context: GqlContext, @Cookies("uid") id: String): Promise<CheckAuthData> {
         console.log("checkAuth", id);
         return {isAuth: true};
     }
@@ -26,7 +26,7 @@ export class AuthResolver {
         this.setTokensCookie(context, tokens)
         // @ts-ignore
         context.req.res.cookie("uid", uid, {
-            httpOnly: false, 
+            httpOnly: false,
         });
 
         return tokens;

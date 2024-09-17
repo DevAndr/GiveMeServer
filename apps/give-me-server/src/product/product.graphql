@@ -48,6 +48,8 @@
 
  type Query {
      productsWishList(idWishList: String!): [Product]
+     productsWishListPublic(idWishList: String!): [Product]
+     testProductQuery: String
  }
 
  type Mutation {

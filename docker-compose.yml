@@ -33,7 +33,7 @@ services:
       - './data/redis:/data'
     networks:
       - give-me-networks
-
+app://dd/#
   rabbitMQ:
     image: rabbitmq:management-alpine
     container_name: give-me-rabbitMQ

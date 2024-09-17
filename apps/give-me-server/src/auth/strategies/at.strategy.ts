@@ -11,7 +11,7 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(config: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        // AtStrategy.extractJWT,
+        AtStrategy.extractJWT,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       secretOrKey: config.get<string>("AT_SECRET"),
@@ -30,7 +30,7 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt") {
     if (cookies) {
       if (!cookies?.access_token && cookies?.refresh_token) {
         // console.log("request tokens", cookies?.refresh_token);
-        
+
       }
 
       return cookies?.access_token;

@@ -153,6 +153,10 @@ export abstract class IQuery {
 
     abstract productsWishList(idWishList: string): Nullable<Nullable<Product>[]> | Promise<Nullable<Nullable<Product>[]>>;
 
+    abstract productsWishListPublic(idWishList: string): Nullable<Nullable<Product>[]> | Promise<Nullable<Nullable<Product>[]>>;
+
+    abstract testProductQuery(): Nullable<string> | Promise<Nullable<string>>;
+
     abstract getOrCreateSender(): Nullable<Sender> | Promise<Nullable<Sender>>;
 
     abstract getSenderById(id: string): Nullable<Sender> | Promise<Nullable<Sender>>;

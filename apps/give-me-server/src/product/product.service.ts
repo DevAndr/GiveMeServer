@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Product } from "@prisma/client";
+import { Access, Product } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { MoveProductDto } from "./dto/move-product.dto";
@@ -21,6 +21,19 @@ export class ProductService {
       {
         where: {
           idWishList
+        }
+      }
+    );
+  }
+
+  async productsWishListPublic(idWishList: string): Promise<Product[]> {
+    return this.prismaService.product.findMany(
+      {
+        where: {
+          idWishList,
+          wishList: {
+            access: Access.PUBLIC
+          }        
         }
       }
     );

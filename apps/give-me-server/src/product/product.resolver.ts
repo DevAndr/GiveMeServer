@@ -21,6 +21,12 @@ export class ProductResolver {
     return await this.productService.productsWishList(idWishList);
   }
 
+  @Public()
+  @Query("productsWishListPublic")
+  async productsWishListPublic(@Args("idWishList") idWishList: string) {
+    return await this.productService.productsWishListPublic(idWishList);
+  }
+
   @Mutation("updateProduct")
   async updateProduct(
     @Args("data") product: UpdateProductDto,
@@ -68,5 +74,11 @@ export class ProductResolver {
     @GetCurrentUserId() id: string
   ) {
     await this.productService.removeByUIDs(products);
+  }
+
+  @Public()
+  @Query("testProductQuery")
+  testQuery() {
+    return "test";
   }
 }
