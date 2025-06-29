@@ -1,4 +1,4 @@
-export type MarketPlace = {
-  OZON
-  WB
+export enum MarketPlace {
+  OZON = "OZON",
+  WB = "WB"
 }

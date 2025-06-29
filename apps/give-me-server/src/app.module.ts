@@ -20,6 +20,9 @@ import { WebSocketService } from "./ws/websocket.service";
 import { RmqModule } from "@app/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { NOTIFICATION_SERVICE, PARSER_SERVICE } from "libs/common/constants";
+import { OrderResolver } from './order/order.resolver';
+import { OrderModule } from './order/order.module';
+import { SenderModule } from './sender/sender.module';
 
 export interface GqlContext {
   req: Request;
@@ -67,7 +70,7 @@ export interface GqlContext {
         }
       })
     }),
-    UserModule,
+    UserModule, 
     AuthModule,
     WishListModule,
     HistoryModule,
@@ -80,7 +83,9 @@ export interface GqlContext {
     }),
     RmqModule.register({
     	name: PARSER_SERVICE
-    })
+    }),
+    OrderModule,
+    SenderModule
   ],
   providers: [
     {
@@ -91,7 +96,7 @@ export interface GqlContext {
       provide: "PUB_SUB",
       useValue: new PubSub()
     },
-    WebSocketService
+    WebSocketService, 
   ]
 })
 export class AppModule {

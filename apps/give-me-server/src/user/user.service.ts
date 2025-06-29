@@ -3,9 +3,8 @@ import {PrismaService} from '../prisma/prisma.service';
 import {Prisma, User} from '@prisma/client';
 import {RemoveListDto} from './dto/remove-list.dto';
 import {UpdateDataUserDto} from './dto/update-data-user.dto';
-import {PublicDataUserDto} from './dto/public-data-user.dto';
-import {CreateUserInput} from "../schema/graphql";
-import {UpdateUserInput} from "../../../../src/schema/graphql";
+import {PublicDataUserDto} from './dto/public-data-user.dto'; 
+import { UpdateUserInput } from 'schema/graphql';
 
 
 @Injectable()
@@ -23,7 +22,7 @@ export class UserService {
         const user = await this.prismaService.user.findUnique({
             where,
             select: {
-                uid: true, name: true, email: true, createAt: true, updateAt: true
+                id: true, name: true, email: true, createAt: true, updateAt: true
             }
         });
 
@@ -56,7 +55,7 @@ export class UserService {
             data,
             where,
             select: {
-                uid: true, name: true, email: true, createAt: true, updateAt: true
+                id: true, name: true, email: true, createAt: true, updateAt: true
             }
         });
 
@@ -64,14 +63,14 @@ export class UserService {
     }
 
     async removeListById(removeListDto: RemoveListDto): Promise<User> {
-        const {uidList, uid} = removeListDto;
+        const {idList, id} = removeListDto;
         return await this.prismaService.user.update({
             where: {
-                uid,
+                id,
             },
             data: {
                 wishLists: {
-                    deleteMany: [{uid: uidList}],
+                    deleteMany: [{id: idList}],
                 },
             },
             include: {

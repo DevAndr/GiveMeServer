@@ -1,4 +1,4 @@
 export class RemoveListDto {
-  uid: string
-  uidList: string
+  id: string
+  idList: string
 }

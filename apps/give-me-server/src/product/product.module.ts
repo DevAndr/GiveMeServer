@@ -9,53 +9,8 @@ import { ParsedEventService } from "./parsed.event.service";
 import { PARSER_SERVICE } from "libs/common/constants";
 
 @Module({
-  imports: [
-    // ClientsModule.register([
-    //   {
-    //     name: "PARSER-MICROSERVICE",
-    //     transport: Transport.TCP
-    //   },
-    // ]),
-    RmqModule.register({name: PARSER_SERVICE}),
-    // ClientsModule.register([
-    //   {
-    //     name: PARSER_SERVICE,
-    //     transport: Transport.RMQ,
-    //     options: {
-    //       urls: ["amqp://guest:guest@localhost:5672"],
-    //       queue: `RABBIT_MQ_${PARSER_SERVICE}_QUEUE`,
-    //       queueOptions: {
-    //         durable: true
-    //       },
-    //     }
-    //   }
-    // ]),
-    // ClientsModule.register([
-    //   {
-    //     name: 'PARSED_STREAM',
-    //     transport: Transport.RMQ,
-    //     options: {
-    //       urls: ["amqp://guest:guest@localhost:5672"],
-    //       queue: `RABBIT_MQ_${PARSER_SERVICE}_QUEUE`,
-    //       queueOptions: {
-    //         durable: true
-    //       },
-    //     }
-    //   }
-    // ]),
-    // ClientsModule.register([
-    //   {
-    //     name: 'PARSED',
-    //     transport: Transport.RMQ,
-    //     options: {
-    //       urls: ["amqp://guest:guest@localhost:5672"],
-    //       queue: `RABBIT_MQ_${'PARSED_STREAM'}_QUEUE`,
-    //       queueOptions: {
-    //         durable: true
-    //       },
-    //     }
-    //   }
-    // ])
+  imports: [ 
+    RmqModule.register({name: PARSER_SERVICE}), 
 
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [

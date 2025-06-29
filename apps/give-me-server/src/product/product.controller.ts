@@ -15,12 +15,7 @@ export class ProductController {
               @Inject(PARSER_SERVICE) private readonly parserClient: ClientProxy
   ) {}
 
-  @Post("add")
-  @Public()
-  getAll(@Body() createProduct: CreateProductDto) {
-    return this.productService.create(createProduct);
-  }
-
+ 
   @Post("move")
   @Public()
   addToList(@Body() moveProduct: MoveProductDto) {
@@ -29,14 +24,14 @@ export class ProductController {
 
   @Post("remove")
   @Public()
-  remove(@Body("uid") uid: string) {
-    return this.productService.remove(uid);
+  remove(@Body("id") id: string) {
+    return this.productService.remove(id);
   }
 
   @Post("remove-by-ids")
   @Public()
-  removeByIds(@Body() uids: string[]) {
-    return this.productService.removeByUIDs(uids);
+  removeByIds(@Body() ids: string[]) {
+    return this.productService.removeByUIDs(ids);
   }
 
   @Post("remove-all-by-list")
@@ -56,25 +51,14 @@ export class ProductController {
     return {};
   }
 
-  // @EventPattern('a')
-  // async handleUserCreated(data) {
-  //   console.log(data);
-  // }
-
-  // @MessagePattern('a')
-  // onParseDataForProduct(@Payload() data, @Ctx() context: RmqContext){
-  //   console.log(data);
-  // }
-
   @MessagePattern("PARSED_DATA")
   onParsed(@Payload() data, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const msg = context.getMessage();
 
-    channel.ack(msg);
-    const {parsedData, uidUser} = data
-    console.log("API - PARSED_DATA", parsedData);
-    this.productService.update(parsedData);
+    channel.ack(msg); 
+    console.log("API - PARSED_DATA", data);
+    this.productService.update(data);
   }
 
 }

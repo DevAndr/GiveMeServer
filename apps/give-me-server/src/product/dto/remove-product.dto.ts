@@ -1,4 +1,4 @@
 export class RemoveProductDto {
-  uid?: string
-  uidWishList?: string
+  id?: string
+  idWishList?: string
 }

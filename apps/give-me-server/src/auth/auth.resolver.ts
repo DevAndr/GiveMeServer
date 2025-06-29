@@ -14,18 +14,21 @@ export class AuthResolver {
     }
 
     @Query("checkAuth")
-    async checkAuth(@Context() context: GqlContext, @Cookies("uid") uid: String): Promise<CheckAuthData> {
-        console.log("checkAuth", uid);
+    async checkAuth(@Context() context: GqlContext, @Cookies("id") id: String): Promise<CheckAuthData> {
+        console.log("checkAuth", id);
         return {isAuth: true};
     }
 
     @Public()
     @Mutation("logIn")
-    async logIn(@Args("data") authDto: AuthDto,
-                @Context() context: GqlContext, @Cookies("uid") uid: String
-    ): Promise<Tokens> {
-        const tokens = await this.authService.signInLocal(authDto);
+    async logIn(@Args("data") authDto: AuthDto, @Context() context: GqlContext): Promise<Tokens> {
+        const {tokens, uid} = await this.authService.signInLocal(authDto);
         this.setTokensCookie(context, tokens)
+        // @ts-ignore
+        context.req.res.cookie("uid", uid, {
+            httpOnly: false, 
+        });
+
         return tokens;
     }
 
@@ -41,10 +44,10 @@ export class AuthResolver {
     @Public()
     @UseGuards(RtGuard)
     @Mutation("refresh")
-    async refreshToken(@GetCurrentUserId() uid: string,
+    async refreshToken(@GetCurrentUserId() id: string,
                        @GetCurrentUser("refreshToken") refreshToken: string,
                        @Context() context: GqlContext): Promise<Tokens> {
-        const tokens = await this.authService.refreshToken(uid, refreshToken);
+        const tokens = await this.authService.refreshToken(id, refreshToken);
         this.setTokensCookie(context, tokens)
 
         return tokens;
@@ -55,7 +58,7 @@ export class AuthResolver {
     // @UseGuards(RtGuard)
     @Mutation("twitch")
     async twitch(@Args("code") code: string,
-                 @GetCurrentUserId() uid: string,
+                 @GetCurrentUserId() id: string,
                  @GetCurrentUser("refreshToken") refreshToken: string,
                  @Context() context: GqlContext): Promise<Tokens | null> {
 

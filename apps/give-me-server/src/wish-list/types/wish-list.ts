@@ -1,6 +1,6 @@
 export interface IWishListBase {
-  uid: string
-  uidUser: string
+  id: string
+  idUser: string
   name?: string
   description?: string
 }

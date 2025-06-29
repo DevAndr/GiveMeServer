@@ -1,7 +1,7 @@
 import { MarketPlace, StatusOrder } from './index';
 
 export interface IProduct {
-  uidWishList?: string
+  idWishList?: string
   name: string
   description: string
   link: string

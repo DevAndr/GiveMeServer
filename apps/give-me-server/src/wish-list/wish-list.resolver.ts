@@ -17,39 +17,37 @@ export class WishListResolver {
 
   // @Public()
   @Query("wishListsCurrentUser")
-  wishListsCurrentUser(@GetCurrentUserId() uid: string) {
-    return this.wishListService.getAll(uid);
+  wishListsCurrentUser(@GetCurrentUserId() id: string) {
+    return this.wishListService.getAll(id);
   }
 
   @Public()
   @Query("wishLisByIdForUser")
-  wishLisByIdForUser(@Args("uidUser") uidUser: string, @Args("uidList") uidList: string) {
-    return this.wishListService.getListByIdForUser({ uidUser, uid: uidList });
+  wishLisByIdForUser(@Args("idUser") idUser: string, @Args("idList") idList: string) {
+    return this.wishListService.getListByIdForUser({ idUser, id: idList });
   }
 
   @Roles("ADMIN")
   @Mutation("createList")
-  async createList(@Args("data") data, @GetCurrentUserId() uid: string) {
-    console.log(data, uid);
-    const newList = await this.wishListService.addList({ ...data, uidUser: uid });
+  async createList(@Args("data") data, @GetCurrentUserId() id: string) {
+    console.log(data, id);
+    const newList = await this.wishListService.addList({ ...data, idUser: id });
     await this.pubSub.publish("listCreated", { listCreated: newList });
-    // await this.pubSub.publish("list", { list: newList });
     return newList;
   }
 
   @Roles("ADMIN")
   @Mutation("removeList")
-  async removeList(@Args("uid") uid, @GetCurrentUserId() uidUser: string) {
-    const deletedList = await this.wishListService.removeById({uid, uidUser });
-    // await this.pubSub.publish("listCreated", { listCreated: deletedList });
-    await this.pubSub.publish("list", { list: deletedList });
+  async removeList(@Args("id") id, @GetCurrentUserId() idUser: string) {
+    const deletedList = await this.wishListService.removeById({id, idUser }); 
+    await this.pubSub.publish("listRemoved", { list: deletedList });
     return deletedList;
   }
 
   @Roles("ADMIN")
   @Mutation("updateList")
-  async updateList(@Args("data") data: UpdateWishListDto, @GetCurrentUserId() uidUser: string) {
-    // data.uidUser = uidUser
+  async updateList(@Args("data") data: UpdateWishListDto, @GetCurrentUserId() idUser: string) {
+    // data.idUser = idUser
     const updatedList = await this.wishListService.updateList(data);
     // await this.pubSub.publish("listCreated", { listCreated: deletedList });
     // await this.pubSub.publish("list", { list: deletedList });
@@ -57,26 +55,23 @@ export class WishListResolver {
   }
 
   @Public()
-  // @UseGuards(AtWsGuard)
   @Subscription(returns => WishList, {
     name: "listCreated",
-    filter: (payload, variables) =>
-      payload.listCreated.uidUser === variables.uidUser
+    filter: (payload, variables) => payload.listCreated.idUser === variables.idUser
   })
-  async listCreated(@Args("uidUser") uidUser: string) {
-    console.log("Subscription", uidUser);
+  async listCreated(@Args("idUser") idUser: string) {
+    console.log("listCreated", idUser);
     return this.pubSub.asyncIterator("listCreated");
   }
 
   @Public()
-  // @UseGuards(AtWsGuard)
   @Subscription(returns => WishList, {
-    name: "list",
+    name: "listRemoved",
     filter: (payload, variables) =>
-      payload.list.uidUser === variables.uidUser
+      payload.list.idUser === variables.idUser
   })
-  async list(@Args("uidUser") uidUser: string) {
-    console.log('list');
-    return this.pubSub.asyncIterator("list");
+  async listRemoved(@Args("idUser") idUser: string) {
+    console.log('listRemoved', idUser);
+    return this.pubSub.asyncIterator("listRemoved");
   }
 }

@@ -1,0 +1,14 @@
+
+type Sender {
+  id: String 
+  email: String
+  nickname: String 
+}
+
+
+type Query {
+    getOrCreateSender: Sender
+    getSenderById(id: String!): Sender
+}
+
+ 

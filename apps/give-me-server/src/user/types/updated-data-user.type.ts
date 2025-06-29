@@ -1,5 +1,5 @@
 export type UpdatedDataUser = {
-  uid?: string
+  id?: string
   name?: string
   email?: string
   createAt?: string | Date
