@@ -1,6 +1,6 @@
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { GraphQLModule } from "@nestjs/graphql";
@@ -20,9 +20,10 @@ import { WebSocketService } from "./ws/websocket.service";
 import { RmqModule } from "@app/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { NOTIFICATION_SERVICE, PARSER_SERVICE } from "libs/common/constants";
-import { OrderResolver } from './order/order.resolver';
-import { OrderModule } from './order/order.module';
-import { SenderModule } from './sender/sender.module';
+import { OrderResolver } from "./order/order.resolver";
+import { OrderModule } from "./order/order.module";
+import { SenderModule } from "./sender/sender.module";
+import { LoggerMiddleware } from "./middelwares/logger.middleware";
 
 export interface GqlContext {
   req: Request;
@@ -45,7 +46,7 @@ export interface GqlContext {
         cors: {
           origin: true,
           // origin: 'http://localhost:3000',
-          credentials: true
+          credentials: true,
         },
         plugins: [ApolloServerPluginLandingPageLocalDefault()],
         typePaths: ["./**/*.graphql"],
@@ -53,7 +54,7 @@ export interface GqlContext {
         // context: ({req}) => ({headers: req.headers}),
         context: (ctx: GqlContext) => ({ ...ctx }),
         subscriptions: {
-          "graphql-ws": true
+          "graphql-ws": true,
           //   {
           //   onConnect: (context) => {
           //     const { connectionParams, extra } = context;
@@ -67,10 +68,10 @@ export interface GqlContext {
           //   },
           // },
           // "subscriptions-transport-ws": true
-        }
-      })
+        },
+      }),
     }),
-    UserModule, 
+    UserModule,
     AuthModule,
     WishListModule,
     HistoryModule,
@@ -79,25 +80,28 @@ export interface GqlContext {
     PrismaModule,
     ProductModule,
     RmqModule.register({
-    	name: NOTIFICATION_SERVICE
+      name: NOTIFICATION_SERVICE,
     }),
     RmqModule.register({
-    	name: PARSER_SERVICE
+      name: PARSER_SERVICE,
     }),
     OrderModule,
-    SenderModule
+    SenderModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
-      useClass: GqlAuthGuard
+      useClass: GqlAuthGuard,
     },
     {
       provide: "PUB_SUB",
-      useValue: new PubSub()
+      useValue: new PubSub(),
     },
     WebSocketService, 
-  ]
+  ],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes("*");
+  }
 }

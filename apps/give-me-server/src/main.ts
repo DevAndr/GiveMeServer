@@ -16,8 +16,6 @@ async function run() {
     { origin: true, credentials: true }
   );
 
-  const config = app.get(ConfigService);
-
   app.connectMicroservice({
     transport: Transport.REDIS,
     options: {

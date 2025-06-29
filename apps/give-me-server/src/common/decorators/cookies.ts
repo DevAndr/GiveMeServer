@@ -2,12 +2,13 @@ import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 
 export const Cookies = createParamDecorator(
-  (field: string, ctx: ExecutionContext) => {
-    if (ctx.getType() !== "http") {
-      const ctxGql = GqlExecutionContext.create(ctx);
-      const request = ctxGql.getContext().req;
-      return field ? request.cookies?.[field] : null;
-    }
+  (data: string, ctx: ExecutionContext) => {
+      if (ctx.getType() === "http") {
+          const request = ctx.switchToHttp().getRequest();
+          return data ? request?.cookies?.[data] : request?.cookies;
+      }
 
-    return null
+      const ctxGql = GqlExecutionContext.create(ctx);
+      const req = ctxGql.getContext().req;
+      return data ? req.cookies?.[data] : req.cookies;
   });
