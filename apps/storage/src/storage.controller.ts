@@ -12,6 +12,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { ConfigService } from "@nestjs/config";
 import { editFileName, imageFileFilter, pathUploadImages } from "./utils";
+import { MessagePattern } from "@nestjs/microservices";
 
 @Controller("storage")
 export class StorageController {
@@ -54,4 +55,6 @@ export class StorageController {
   getHello(): string {
     return this.storageService.getHello();
   }
+
+
 }
