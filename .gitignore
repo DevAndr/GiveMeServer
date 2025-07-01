@@ -105,4 +105,5 @@ prisma/migrations
 yarn.lock
 package-lock.json
 /data/
+/generated/*
 /.vscode/settings.json
